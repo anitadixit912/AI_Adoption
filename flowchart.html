@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AI Adoption Tracker – System Flowchart</title>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f4f6fb;
+      color: #1a1a2e;
+      padding: 32px 24px;
+    }
+    h1 {
+      text-align: center;
+      font-size: 1.6rem;
+      margin-bottom: 6px;
+      color: #0a2540;
+    }
+    p.subtitle {
+      text-align: center;
+      color: #5a6a85;
+      font-size: 0.95rem;
+      margin-bottom: 32px;
+    }
+    .section {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+      padding: 28px 32px;
+      margin-bottom: 28px;
+    }
+    .section h2 {
+      font-size: 1.05rem;
+      color: #0057b8;
+      margin-bottom: 18px;
+      border-left: 4px solid #0057b8;
+      padding-left: 10px;
+    }
+    .mermaid {
+      overflow-x: auto;
+    }
+  </style>
+</head>
+<body>
+
+<h1>AI Tool Adoption Tracker – ENR</h1>
+<p class="subtitle">System Flowchart — Review before implementation</p>
+
+<!-- FLOW 1: Data Ingestion -->
+<div class="section">
+  <h2>1. Data Ingestion</h2>
+  <div class="mermaid">
+flowchart TD
+    A([Consultant Uses AI Tool]) --> B{API Available?}
+    B -- Yes --> C[Auto-capture via Tool API\nEKX / J4C / J4D / Joule Desktop / Joule Studio]
+    B -- No --> D[Consultant Logs Session Manually\nvia Self-Service Form]
+    C --> E[Session Record Created\ntool, consultant, date, duration]
+    D --> E
+    E --> F[System Estimates Hours Saved\nbased on session duration]
+    F --> G{Consultant wants\nto adjust?}
+    G -- Yes --> H[Consultant Overrides Hours Saved]
+    G -- No --> I[Estimate Accepted]
+    H --> J[(CAP Database\nUsage Sessions)]
+    I --> J
+  </div>
+</div>
+
+<!-- FLOW 2: Classification Engine -->
+<div class="section">
+  <h2>2. Adoption Classification Engine</h2>
+  <div class="mermaid">
+flowchart TD
+    A[(CAP Database\nUsage Sessions)] --> B[Scheduled Job\nRuns Daily]
+    B --> C{Sessions in\nlast 30 days?}
+    C -- "≥ threshold" --> D[Active Adopter 🟢]
+    C -- "Below threshold" --> E{Sessions in\nlast 60 days?}
+    E -- Yes --> F[Occasional User 🟡]
+    E -- No --> G{Sessions in\nlast 90 days?}
+    G -- Yes --> H[Lapsed User 🟠]
+    G -- No --> I[Non-Adopter 🔴]
+    D --> J[(Consultant Profile\nUpdated)]
+    F --> J
+    H --> J
+    I --> J
+    J --> K{Non-Adopter or\nLapsed > 30 days?}
+    K -- Yes --> L[Trigger In-App\nNudge Notification]
+    K -- No --> M[No Action]
+  </div>
+</div>
+
+<!-- FLOW 3: Dashboard Views -->
+<div class="section">
+  <h2>3. Dashboard Views (Role-Based)</h2>
+  <div class="mermaid">
+flowchart TD
+    A([User Logs In]) --> B{User Role?}
+
+    B -- CoE Leadership --> C[CoE Leadership Dashboard]
+    C --> C1[Overall Adoption %]
+    C --> C2[Non-Adopter Count]
+    C --> C3[Tool Breakdown Bar Chart]
+    C --> C4[Efficiency Gains / Hours Saved]
+    C --> C5[AI Adoption Health Score]
+
+    B -- Practice Lead --> D[Practice Lead Dashboard]
+    D --> D1[Team Heatmap\nConsultant × Tool]
+    D --> D2[Non-Adopter List]
+    D --> D3[Lapsed Alerts]
+    D --> D4[Editable Fields\ne.g. targets, notes]
+
+    B -- Consultant --> E[Self-Service Dashboard]
+    E --> E1[My Usage by Tool]
+    E --> E2[My Adoption Tier]
+    E --> E3[Peer Comparison\nanonymized]
+    E --> E4[Tools I haven't tried yet]
+    E --> E5[My In-App Notifications]
+  </div>
+</div>
+
+<!-- FLOW 4: Automated Reporting & Notifications -->
+<div class="section">
+  <h2>4. Automated Reporting & Notifications (n8n)</h2>
+  <div class="mermaid">
+flowchart TD
+    T1([Every Monday\n8:00 AM]) --> W1[n8n: Weekly Digest Workflow]
+    W1 --> W1A[Aggregate team usage\nper Practice Lead]
+    W1A --> W1B[Generate digest summary\nnon-adopters, lapsed, top tools]
+    W1B --> W1C[Post In-App Notification\nto Practice Leads]
+
+    T2([1st of Every Month]) --> W2[n8n: Monthly CoE Summary Workflow]
+    W2 --> W2A[Aggregate all BU data]
+    W2A --> W2B[Calculate adoption rate\nhours saved, health score]
+    W2B --> W2C[Post In-App Summary Report\nto CoE Leadership]
+
+    T3([Daily Check\nScheduled Job]) --> W3[n8n: Nudge Notification Workflow]
+    W3 --> W3A{Consultant inactive\n> 30 days?}
+    W3A -- Yes --> W3B[Send In-App Nudge\n'You haven't used AI tools recently']
+    W3A -- No --> W3C[Skip]
+  </div>
+</div>
+
+<!-- FLOW 5: Overall Architecture -->
+<div class="section">
+  <h2>5. Overall Architecture Overview</h2>
+  <div class="mermaid">
+flowchart LR
+    subgraph Tools["AI Tools (Data Sources)"]
+        T1[EKX]
+        T2[J4C]
+        T3[J4D]
+        T4[Joule Desktop]
+        T5[Joule Studio]
+    end
+
+    subgraph CAP["CAP Backend (SAP BTP)"]
+        S1[Usage Session Service]
+        S2[Consultant Profile Service]
+        S3[Classification Engine]
+        S4[Notification Service]
+        S5[(SQLite / HANA DB)]
+    end
+
+    subgraph UI["React UI (SAP UI5 Web Components)"]
+        U1[CoE Leadership View]
+        U2[Practice Lead View]
+        U3[Self-Service View]
+    end
+
+    subgraph N8N["n8n Workflows"]
+        N1[Weekly Digest]
+        N2[Monthly Report]
+        N3[Nudge Notifications]
+    end
+
+    Tools -->|Auto API / Manual| S1
+    S1 --> S5
+    S2 --> S5
+    S3 -->|Reads sessions| S5
+    S3 -->|Updates tiers| S2
+    S4 -->|Stores notifications| S5
+    N1 & N2 & N3 -->|Trigger via CAP API| S4
+    S5 -->|OData / REST| U1
+    S5 -->|OData / REST| U2
+    S5 -->|OData / REST| U3
+  </div>
+</div>
+
+<script>
+  mermaid.initialize({ startOnLoad: true, theme: 'default', flowchart: { curve: 'basis' } });
+</script>
+</body>
+</html>
