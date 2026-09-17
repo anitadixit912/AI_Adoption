@@ -69,6 +69,13 @@ export default function App() {
             </button>
           ))}
         </nav>
+        <div className="shell-actions">
+          <button
+            className="open-browser-btn"
+            title="Open in browser"
+            onClick={() => window.open(window.location.href, '_blank')}
+          >↗ Open in Browser</button>
+        </div>
         <div className="shell-user">
           <select
             value={currentUser.id}

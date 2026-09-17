@@ -66,6 +66,19 @@ body {
 .nav-btn:hover    { background: rgba(255,255,255,0.1); color: #fff; }
 .nav-btn--active  { background: rgba(255,255,255,0.18); color: #fff; font-weight: 600; }
 .shell-user { margin-left: auto; }
+.open-browser-btn {
+  background: #0057b8;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 14px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.open-browser-btn:hover { background: #003d82; }
+
 .user-switcher {
   background: rgba(255,255,255,0.1);
   border: 1px solid rgba(255,255,255,0.2);

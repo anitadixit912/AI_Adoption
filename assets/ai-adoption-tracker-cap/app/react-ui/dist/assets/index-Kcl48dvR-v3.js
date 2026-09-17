@@ -9951,6 +9951,15 @@ function App() {
 					}, item.key))
 				}),
 				/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+					className: "shell-actions",
+					children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+						className: "open-browser-btn",
+						title: "Open in browser",
+						onClick: () => window.open(window.location.href, "_blank"),
+						children: "↗ Open in Browser"
+					})
+				}),
+				/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
 					className: "shell-user",
 					children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("select", {
 						value: currentUser.id,
