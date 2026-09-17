@@ -12,7 +12,7 @@
     "c8": "^12.0.0"
   },
   "scripts": {
-    "start": "cds serve",
+    "start": "node start.mjs",
     "build": "npm run build --workspace=app/react-ui && cds build --production",
     "test": "NODE_ENV=test c8 --reporter=json node --test --test-reporter=spec --test-reporter-destination=stdout --test-reporter=./scripts/test-report-reporter.mjs --test-reporter-destination=stdout 'test/**/*.test.js' && node ./scripts/write-test-report.mjs"
   },
