@@ -8,5 +8,5 @@ applications:
       - nodejs_buildpack
     command: node start.mjs
     env:
-      NODE_ENV: production
+      NODE_ENV: development
       NPM_CONFIG_PRODUCTION: false
