@@ -1,5 +1,4 @@
 node_modules/
 app/react-ui/node_modules/
-app/react-ui/dist/
 db.sqlite
 .env
