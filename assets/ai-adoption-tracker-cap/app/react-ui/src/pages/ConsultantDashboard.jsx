@@ -28,30 +28,37 @@ const TOOL_LINKS = {
   EKX: 'https://www.sap.com/products/artificial-intelligence.html'
 }
 
-export default function ConsultantDashboard() {
+export default function ConsultantDashboard({ currentUser }) {
+  const consultantID = currentUser?.id ?? MY_CONSULTANT_ID
   const [consultant, setConsultant]       = useState(null)
   const [sessions, setSessions]           = useState([])
   const [peer, setPeer]                   = useState(null)
   const [notifications, setNotifications] = useState([])
   const [tools, setTools]                 = useState([])
   const [loading, setLoading]             = useState(true)
+  const [error, setError]                 = useState(null)
   const [modal, setModal]                 = useState(null)
 
   useEffect(() => {
+    setLoading(true)
+    setError(null)
     Promise.all([
-      apiGet(`/Consultants('${MY_CONSULTANT_ID}')?$expand=sessions($expand=tool)`),
-      apiGet(`/getPeerComparison(consultantID=${MY_CONSULTANT_ID})`),
-      apiGet(`/Notifications?$filter=consultant_ID eq ${MY_CONSULTANT_ID}&$orderby=createdAt desc`),
+      apiGet(`/Consultants('${consultantID}')?$expand=sessions($expand=tool)`),
+      apiGet(`/getPeerComparison(consultantID=${consultantID})`),
+      apiGet(`/Notifications?$filter=consultant_ID eq ${consultantID}&$orderby=createdAt desc`),
       apiGet('/AITools')
     ]).then(([c, p, n, t]) => {
       setConsultant(c)
       setSessions(c.sessions ?? [])
       setPeer(p)
-      setNotifications(n)
-      setTools(t)
+      setNotifications(n.value ?? n ?? [])
+      setTools(t.value ?? t ?? [])
       setLoading(false)
-    }).catch(() => setLoading(false))
-  }, [])
+    }).catch(e => {
+      setError(e.message)
+      setLoading(false)
+    })
+  }, [consultantID])
 
   async function markRead(notifID) {
     await apiPatch(`/Notifications('${notifID}')`, { isRead: true })
@@ -59,7 +66,8 @@ export default function ConsultantDashboard() {
   }
 
   if (loading) return <div className="loading">Loading your dashboard...</div>
-  if (!consultant) return <div className="error">Could not load your profile.</div>
+  if (error) return <div className="error">Could not load your profile: {error}</div>
+  if (!consultant) return <div className="error">Profile not found for ID: {consultantID}</div>
 
   const tier     = consultant.adoptionTier ?? 'NonAdopter'
   const tierInfo = TIER_COLORS[tier] ?? { bg: '#888', label: tier }
