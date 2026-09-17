@@ -20,6 +20,14 @@ const TOOL_DESCRIPTIONS = {
   EKX: 'EKX — Internal SAP AI tool for knowledge extraction'
 }
 
+const TOOL_LINKS = {
+  JWD: 'https://www.sap.com/products/artificial-intelligence/ai-assistant.html',
+  JS:  'https://www.sap.com/products/artificial-intelligence/ai-assistant.html',
+  J4C: 'https://www.sap.com/products/artificial-intelligence/ai-assistant.html',
+  J4D: 'https://www.sap.com/products/artificial-intelligence/ai-assistant.html',
+  EKX: 'https://www.sap.com/products/artificial-intelligence.html'
+}
+
 export default function ConsultantDashboard() {
   const [consultant, setConsultant]       = useState(null)
   const [sessions, setSessions]           = useState([])
@@ -249,7 +257,30 @@ export default function ConsultantDashboard() {
               <strong>Tools you haven't tried recently:</strong>
               <div className="unused-tool-list">
                 {unusedTools.map(t => (
-                  <span key={t} className="unused-tool-badge">{t}</span>
+                  <span key={t} className="unused-tool-badge clickable" onClick={() => setModal({
+                    title: `${t} — Get Started`,
+                    content: (
+                      <>
+                        <div className="modal-row"><span className="modal-label">Tool</span><span className="modal-value">{t}</span></div>
+                        <div className="modal-row"><span className="modal-label">Description</span><span className="modal-value" style={{fontSize:'0.8rem',textAlign:'right'}}>{TOOL_DESCRIPTIONS[t] ?? t}</span></div>
+                        <div className="modal-section-title">Why try it?</div>
+                        <p style={{fontSize:'0.85rem',color:'#5a6a85',lineHeight:1.6}}>
+                          Using {t} will diversify your AI skills and boost your adoption tier. Even one session counts!
+                        </p>
+                        <div className="modal-section-title">Open the tool</div>
+                        <a
+                          href={TOOL_LINKS[t] ?? '#'}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          style={{display:'inline-block',marginTop:8,padding:'8px 18px',background:'#0057b8',color:'#fff',borderRadius:6,textDecoration:'none',fontWeight:600,fontSize:'0.9rem'}}
+                        >
+                          Open {t} ↗
+                        </a>
+                      </>
+                    )
+                  })}>
+                    {t} ↗
+                  </span>
                 ))}
               </div>
               <p className="unused-tip">Try one of these tools this week to boost your adoption tier!</p>
@@ -277,6 +308,9 @@ export default function ConsultantDashboard() {
           ))
         }
       </div>
+
+      {/* Modal */}
+      {modal && <Modal title={modal.title} onClose={() => setModal(null)}>{modal.content}</Modal>}
     </div>
   )
 }

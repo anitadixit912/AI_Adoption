@@ -8977,6 +8977,13 @@ var TOOL_DESCRIPTIONS = {
 	J4D: "Joule for Developers — AI assistant for advanced development tasks",
 	EKX: "EKX — Internal SAP AI tool for knowledge extraction"
 };
+var TOOL_LINKS = {
+	JWD: "https://www.sap.com/products/artificial-intelligence/ai-assistant.html",
+	JS: "https://www.sap.com/products/artificial-intelligence/ai-assistant.html",
+	J4C: "https://www.sap.com/products/artificial-intelligence/ai-assistant.html",
+	J4D: "https://www.sap.com/products/artificial-intelligence/ai-assistant.html",
+	EKX: "https://www.sap.com/products/artificial-intelligence.html"
+};
 function ConsultantDashboard() {
 	const [consultant, setConsultant] = (0, import_react.useState)(null);
 	const [sessions, setSessions] = (0, import_react.useState)([]);
@@ -9531,9 +9538,79 @@ function ConsultantDashboard() {
 							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("strong", { children: "Tools you haven't tried recently:" }),
 							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
 								className: "unused-tool-list",
-								children: unusedTools.map((t) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-									className: "unused-tool-badge",
-									children: t
+								children: unusedTools.map((t) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
+									className: "unused-tool-badge clickable",
+									onClick: () => setModal({
+										title: `${t} — Get Started`,
+										content: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [
+											/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+												className: "modal-row",
+												children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+													className: "modal-label",
+													children: "Tool"
+												}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+													className: "modal-value",
+													children: t
+												})]
+											}),
+											/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+												className: "modal-row",
+												children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+													className: "modal-label",
+													children: "Description"
+												}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+													className: "modal-value",
+													style: {
+														fontSize: "0.8rem",
+														textAlign: "right"
+													},
+													children: TOOL_DESCRIPTIONS[t] ?? t
+												})]
+											}),
+											/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+												className: "modal-section-title",
+												children: "Why try it?"
+											}),
+											/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", {
+												style: {
+													fontSize: "0.85rem",
+													color: "#5a6a85",
+													lineHeight: 1.6
+												},
+												children: [
+													"Using ",
+													t,
+													" will diversify your AI skills and boost your adoption tier. Even one session counts!"
+												]
+											}),
+											/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+												className: "modal-section-title",
+												children: "Open the tool"
+											}),
+											/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("a", {
+												href: TOOL_LINKS[t] ?? "#",
+												target: "_blank",
+												rel: "noopener noreferrer",
+												style: {
+													display: "inline-block",
+													marginTop: 8,
+													padding: "8px 18px",
+													background: "#0057b8",
+													color: "#fff",
+													borderRadius: 6,
+													textDecoration: "none",
+													fontWeight: 600,
+													fontSize: "0.9rem"
+												},
+												children: [
+													"Open ",
+													t,
+													" ↗"
+												]
+											})
+										] })
+									}),
+									children: [t, " ↗"]
 								}, t))
 							}),
 							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
@@ -9574,6 +9651,11 @@ function ConsultantDashboard() {
 						})
 					]
 				}, n.ID))]
+			}),
+			modal && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Modal, {
+				title: modal.title,
+				onClose: () => setModal(null),
+				children: modal.content
 			})
 		]
 	});
