@@ -237,8 +237,9 @@ export async function getCoEStats() {
   // Per-tool breakdown
   const tools = await SELECT.from(AITools).columns('ID', 'name')
   const toolBreakdown = await Promise.all(tools.map(async t => {
-    const toolSessions = await SELECT.from(UsageSessions).columns('ID').where({ tool_ID: t.ID })
-    return { toolName: t.name, sessionCount: toolSessions.length }
+    const toolSessions = await SELECT.from(UsageSessions).columns('ID', 'consultant_ID').where({ tool_ID: t.ID })
+    const uniqueUsers  = new Set(toolSessions.map(s => s.consultant_ID)).size
+    return { toolName: t.name, sessionCount: toolSessions.length, userCount: uniqueUsers }
   }))
   toolBreakdown.sort((a, b) => b.sessionCount - a.sessionCount)
 

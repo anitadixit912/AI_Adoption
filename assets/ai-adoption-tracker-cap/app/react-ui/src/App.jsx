@@ -7,11 +7,11 @@ import './App.css'
 
 // Role switcher for demo — represents "Test User" as the default current user
 const DEMO_USERS = [
-  { id: 'uuuuuuuu-uuuu-uuuu-uuuu-uuuuuuuuuuuu', name: 'Test User (You) — ENR-APAC', role: 'Consultant'    },
-  { id: 'yyyyyyyy-yyyy-yyyy-yyyy-yyyyyyyyyyyy',  name: 'Sunita Rao — APAC Lead',     role: 'PracticeLead'  },
+  { id: '238251a7-2498-4d41-ba9e-1061c91cc8fd', name: 'Test User (You) — ENR-APAC', role: 'Consultant'    },
+  { id: '90321abe-697b-463b-8f4f-31ac3ff3df7b',  name: 'Sunita Rao — APAC Lead',     role: 'PracticeLead'  },
   { id: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb', name: 'James Okafor — ENR-North',   role: 'PracticeLead'  },
   { id: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', name: 'Sarah Chen — CoE',           role: 'CoELeadership' },
-  { id: 'tttttttt-tttt-tttt-tttt-tttttttttttt', name: 'Alex Turner (Admin)',        role: 'Admin'         },
+  { id: 'b6b4e042-8f6e-4f5f-b5e5-07804262ab88', name: 'Alex Turner (Admin)',        role: 'Admin'         },
 ]
 
 export default function App() {

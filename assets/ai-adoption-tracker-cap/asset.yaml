@@ -14,6 +14,8 @@ provides:
 container:
   buildPath: .
   port: 4004
+  startCommand: cds serve
+  healthCheckPath: /
   env:
     PORT: "4004"
     CDS_LOG_LEVELS: info
