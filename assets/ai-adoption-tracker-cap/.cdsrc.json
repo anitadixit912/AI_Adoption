@@ -3,7 +3,7 @@
     "auth": "dummy",
     "db": {
       "kind": "sqlite",
-      "credentials": { "url": ":memory:" }
+      "credentials": { "url": "db.sqlite" }
     }
   },
   "folders": {
