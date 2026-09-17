@@ -45,7 +45,7 @@ export default function ConsultantDashboard({ currentUser }) {
     Promise.all([
       apiGet(`/Consultants('${consultantID}')?$expand=sessions($expand=tool)`),
       apiGet(`/getPeerComparison(consultantID=${consultantID})`),
-      apiGet(`/Notifications?$filter=consultant_ID eq ${consultantID}&$orderby=createdAt desc`),
+      apiGet(`/Notifications?$filter=consultant_ID eq ${consultantID}`),
       apiGet('/AITools')
     ]).then(([c, p, n, t]) => {
       setConsultant(c)
