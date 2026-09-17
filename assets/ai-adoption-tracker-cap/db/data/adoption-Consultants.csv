@@ -1,0 +1,26 @@
+ID,name,email,role,businessUnit,department,adoptionTier,lastActivityDate
+aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa,Sarah Chen,sarah.chen@company.com,CoELeadership,ENR-Global,Center of Excellence,ActiveAdopter,2026-09-14
+bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb,James Okafor,james.okafor@company.com,PracticeLead,ENR-North,Engineering Practice,ActiveAdopter,2026-09-13
+cccccccc-cccc-cccc-cccc-cccccccccccc,Priya Sharma,priya.sharma@company.com,PracticeLead,ENR-South,Digital Practice,OccasionalUser,2026-08-20
+dddddddd-dddd-dddd-dddd-dddddddddddd,Marco Rossi,marco.rossi@company.com,Consultant,ENR-North,Engineering Practice,ActiveAdopter,2026-09-15
+eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee,Aisha Patel,aisha.patel@company.com,Consultant,ENR-North,Engineering Practice,OccasionalUser,2026-08-25
+ffffffff-ffff-ffff-ffff-ffffffffffff,Tom Nguyen,tom.nguyen@company.com,Consultant,ENR-North,Engineering Practice,LapsedUser,2026-07-10
+gggggggg-gggg-gggg-gggg-gggggggggggg,Leila Hassan,leila.hassan@company.com,Consultant,ENR-North,Engineering Practice,NonAdopter,
+hhhhhhhh-hhhh-hhhh-hhhh-hhhhhhhhhhhh,Carlos Mendez,carlos.mendez@company.com,Consultant,ENR-South,Digital Practice,ActiveAdopter,2026-09-12
+iiiiiiii-iiii-iiii-iiii-iiiiiiiiiiii,Fatima Al-Rashid,fatima.alrashid@company.com,Consultant,ENR-South,Digital Practice,ActiveAdopter,2026-09-10
+jjjjjjjj-jjjj-jjjj-jjjj-jjjjjjjjjjjj,Daniel Kim,daniel.kim@company.com,Consultant,ENR-South,Digital Practice,OccasionalUser,2026-08-18
+kkkkkkkk-kkkk-kkkk-kkkk-kkkkkkkkkkkk,Yuki Tanaka,yuki.tanaka@company.com,Consultant,ENR-South,Digital Practice,LapsedUser,2026-07-05
+llllllll-llll-llll-llll-llllllllllll,Omar Farouk,omar.farouk@company.com,Consultant,ENR-South,Digital Practice,NonAdopter,
+mmmmmmmm-mmmm-mmmm-mmmm-mmmmmmmmmmmm,Elena Petrov,elena.petrov@company.com,Consultant,ENR-Global,Strategy,ActiveAdopter,2026-09-14
+nnnnnnnn-nnnn-nnnn-nnnn-nnnnnnnnnnnn,Raj Kumar,raj.kumar@company.com,Consultant,ENR-Global,Strategy,ActiveAdopter,2026-09-11
+oooooooo-oooo-oooo-oooo-oooooooooooo,Amara Diallo,amara.diallo@company.com,Consultant,ENR-Global,Strategy,OccasionalUser,2026-08-22
+pppppppp-pppp-pppp-pppp-pppppppppppp,Lucas Weber,lucas.weber@company.com,Consultant,ENR-Global,Strategy,NonAdopter,
+qqqqqqqq-qqqq-qqqq-qqqq-qqqqqqqqqqqq,Nina Johansson,nina.johansson@company.com,Consultant,ENR-North,Data Analytics,ActiveAdopter,2026-09-13
+rrrrrrrr-rrrr-rrrr-rrrr-rrrrrrrrrrrr,Ahmed Siddiqui,ahmed.siddiqui@company.com,Consultant,ENR-North,Data Analytics,LapsedUser,2026-07-20
+ssssssss-ssss-ssss-ssss-ssssssssssss,Mei Lin,mei.lin@company.com,Consultant,ENR-South,Data Analytics,OccasionalUser,2026-08-30
+tttttttt-tttt-tttt-tttt-tttttttttttt,Alex Turner,alex.turner@company.com,Admin,ENR-Global,Center of Excellence,ActiveAdopter,2026-09-15
+uuuuuuuu-uuuu-uuuu-uuuu-uuuuuuuuuuuu,Test User,test.user@company.com,Consultant,ENR-APAC,Engineering Practice,OccasionalUser,2026-09-01
+vvvvvvvv-vvvv-vvvv-vvvv-vvvvvvvvvvvv,Kenji Watanabe,kenji.watanabe@company.com,Consultant,ENR-APAC,Engineering Practice,ActiveAdopter,2026-09-14
+wwwwwwww-wwww-wwww-wwww-wwwwwwwwwwww,Preethi Nair,preethi.nair@company.com,Consultant,ENR-APAC,Engineering Practice,ActiveAdopter,2026-09-13
+xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx,Bao Nguyen,bao.nguyen@company.com,Consultant,ENR-APAC,Engineering Practice,NonAdopter,
+yyyyyyyy-yyyy-yyyy-yyyy-yyyyyyyyyyyy,Sunita Rao,sunita.rao@company.com,PracticeLead,ENR-APAC,Engineering Practice,OccasionalUser,2026-08-28

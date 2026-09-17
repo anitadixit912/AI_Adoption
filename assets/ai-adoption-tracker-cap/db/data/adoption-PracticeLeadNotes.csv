@@ -1,0 +1,5 @@
+ID,consultant_ID,practiceLeadID,targetTier,notes,engagementStatus
+p0000001-0000-0000-0000-000000000001,ffffffff-ffff-ffff-ffff-ffffffffffff,bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb,OccasionalUser,Scheduled 1:1 coaching session for week of Sep 20. Tom is open to trying JWD for documentation.,Coaching
+p0000001-0000-0000-0000-000000000002,gggggggg-gggg-gggg-gggg-gggggggggggg,bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb,OccasionalUser,New joiner — needs onboarding to AI tools. Scheduled intro session.,Coaching
+p0000001-0000-0000-0000-000000000003,kkkkkkkk-kkkk-kkkk-kkkk-kkkkkkkkkkkk,cccccccc-cccc-cccc-cccc-cccccccccccc,OccasionalUser,Yuki was active last quarter. Follow up on project workload — may be too busy.,Coaching
+p0000001-0000-0000-0000-000000000004,llllllll-llll-llll-llll-llllllllllll,cccccccc-cccc-cccc-cccc-cccccccccccc,OccasionalUser,Omar has not started. Escalated to department head for awareness.,Escalated

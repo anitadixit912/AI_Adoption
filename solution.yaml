@@ -1,0 +1,10 @@
+apiVersion: solution.sap/v1
+kind: Solution
+
+metadata:
+  name: ai-adoption-tracker-815d9
+  version: 1.0.0
+  description: AI Tool Adoption Tracker for ENR consultants — tracks usage of JWD, JS, J4C, J4D and EKX, classifies adoption tiers, provides role-based dashboards and automated reporting.
+
+assets:
+  - ref: ./assets/ai-adoption-tracker-cap/asset.yaml

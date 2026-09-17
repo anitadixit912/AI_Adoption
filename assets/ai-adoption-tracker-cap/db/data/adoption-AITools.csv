@@ -1,0 +1,6 @@
+ID,name,description,dataSource
+11111111-1111-1111-1111-111111111001,JWD,Joule Work Desktop — SAP AI assistant for workplace productivity,BTPAuditLog
+11111111-1111-1111-1111-111111111002,JS,Joule Studio — SAP AI-assisted development environment,BTPAuditLog
+11111111-1111-1111-1111-111111111003,J4C,Joule for Copilot — AI copilot for business workflows,AICore
+11111111-1111-1111-1111-111111111004,J4D,Joule for Developers — AI assistant for developers,AICore
+11111111-1111-1111-1111-111111111005,EKX,EKX — Internal SAP AI tool (API availability TBC),Manual

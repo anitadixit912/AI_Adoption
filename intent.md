@@ -85,8 +85,8 @@ Custom CAP app on SAP BTP with React UI, role-based dashboards, and n8n-driven a
 A custom Cloud Application Programming (CAP) Node.js application deployed on SAP BTP, with:
 - A CAP data model for consultants, tools, usage sessions, adoption tiers, and notifications
 - A React UI with SAP UI5 Web Components for three role-based dashboard views (CoE Leadership, Practice Lead, Self-Service)
-- Automated reporting and nudge notification workflows built in n8n
-- Hybrid usage data ingestion: API-based auto-capture + manual session logging
+- Automated reporting and nudge notifications implemented as native CAP scheduled jobs
+- Hybrid usage data ingestion: API-based auto-capture + manual session logging for EKX
 
 #### Recommended solution category
 

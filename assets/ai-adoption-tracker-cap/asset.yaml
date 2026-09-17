@@ -1,0 +1,19 @@
+apiVersion: asset.sap/v1
+kind: Asset
+type: cap-app
+
+metadata:
+  name: ai-adoption-tracker-cap
+  version: 1.0.0
+
+provides:
+  protocols:
+    - odata-v4
+    - rest
+
+container:
+  buildPath: .
+  port: 4004
+  env:
+    PORT: "4004"
+    CDS_LOG_LEVELS: info

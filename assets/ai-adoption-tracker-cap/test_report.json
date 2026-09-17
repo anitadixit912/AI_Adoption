@@ -1,0 +1,87 @@
+{
+  "summary": {
+    "total": 13,
+    "passed": 13,
+    "failed": 0,
+    "score": 100,
+    "coverage": 43.66
+  },
+  "sections": [
+    {
+      "name": "CAP Tests",
+      "marker": "cap_tests",
+      "total": 13,
+      "passed": 13,
+      "failed": 0,
+      "skipped": 0,
+      "score": 100,
+      "tests": [
+        {
+          "name": "Adoption Classification Tests > classifies consultant with session in last 30 days as ActiveAdopter",
+          "outcome": "passed",
+          "duration": 0.0328
+        },
+        {
+          "name": "Adoption Classification Tests > classifies consultant with session 45 days ago as OccasionalUser",
+          "outcome": "passed",
+          "duration": 0.0164
+        },
+        {
+          "name": "Adoption Classification Tests > classifies consultant with session 75 days ago as LapsedUser",
+          "outcome": "passed",
+          "duration": 0.0163
+        },
+        {
+          "name": "Adoption Classification Tests > classifies consultant with no sessions as NonAdopter",
+          "outcome": "passed",
+          "duration": 0.0134
+        },
+        {
+          "name": "Adoption Classification Tests > classifies consultant with session older than 90 days as NonAdopter",
+          "outcome": "passed",
+          "duration": 0.0201
+        },
+        {
+          "name": "Adoption Classification Tests > getNonAdopterList returns consultant inactive for exactly 30 days",
+          "outcome": "passed",
+          "duration": 0.0043
+        },
+        {
+          "name": "Adoption Classification Tests > getNonAdopterList excludes consultant active within last 30 days",
+          "outcome": "passed",
+          "duration": 0.0164
+        },
+        {
+          "name": "Efficiency Metrics Tests > logManualSession calculates estimatedHoursSaved correctly for JWD (factor 0.60)",
+          "outcome": "passed",
+          "duration": 0.0032
+        },
+        {
+          "name": "Efficiency Metrics Tests > logManualSession calculates estimatedHoursSaved correctly for J4D (factor 0.70)",
+          "outcome": "passed",
+          "duration": 0.0023
+        },
+        {
+          "name": "Efficiency Metrics Tests > adjustHoursSaved updates consultantAdjustedHours on session",
+          "outcome": "passed",
+          "duration": 0.0041
+        },
+        {
+          "name": "Efficiency Metrics Tests > adjustHoursSaved rejects negative hours",
+          "outcome": "passed",
+          "duration": 0.0012
+        },
+        {
+          "name": "Peer Comparison Tests > getPeerComparison returns anonymized result with no consultant names",
+          "outcome": "passed",
+          "duration": 0.0032
+        },
+        {
+          "name": "Peer Comparison Tests > getPeerComparison percentileRank is between 0 and 100",
+          "outcome": "passed",
+          "duration": 0.0023
+        }
+      ]
+    }
+  ]
+}
