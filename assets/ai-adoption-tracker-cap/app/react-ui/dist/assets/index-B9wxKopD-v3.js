@@ -32,7 +32,7 @@ var __commonJSMin = (cb, mod) => () => (mod || (cb((mod = { exports: {} }).expor
 	}
 })();
 //#endregion
-//#region node_modules/react/cjs/react.production.min.js
+//#region ../../node_modules/react/cjs/react.production.min.js
 /**
 * @license React
 * react.production.min.js
@@ -374,12 +374,12 @@ var require_react_production_min = /* @__PURE__ */ __commonJSMin(((exports) => {
 	exports.version = "18.3.1";
 }));
 //#endregion
-//#region node_modules/react/index.js
+//#region ../../node_modules/react/index.js
 var require_react = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	module.exports = require_react_production_min();
 }));
 //#endregion
-//#region node_modules/react-dom/node_modules/scheduler/cjs/scheduler.production.min.js
+//#region ../../node_modules/scheduler/cjs/scheduler.production.min.js
 /**
 * @license React
 * scheduler.production.min.js
@@ -634,12 +634,12 @@ var require_scheduler_production_min = /* @__PURE__ */ __commonJSMin(((exports) 
 	};
 }));
 //#endregion
-//#region node_modules/react-dom/node_modules/scheduler/index.js
+//#region ../../node_modules/scheduler/index.js
 var require_scheduler = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	module.exports = require_scheduler_production_min();
 }));
 //#endregion
-//#region node_modules/react-dom/cjs/react-dom.production.min.js
+//#region ../../node_modules/react-dom/cjs/react-dom.production.min.js
 /**
 * @license React
 * react-dom.production.min.js
@@ -7496,7 +7496,7 @@ var require_react_dom_production_min = /* @__PURE__ */ __commonJSMin(((exports) 
 	exports.version = "18.3.1-next-f1338f8080-20240426";
 }));
 //#endregion
-//#region node_modules/react-dom/index.js
+//#region ../../node_modules/react-dom/index.js
 var require_react_dom = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	function checkDCE() {
 		if (typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ === "undefined" || typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.checkDCE !== "function") return;
@@ -7510,45 +7510,51 @@ var require_react_dom = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	module.exports = require_react_dom_production_min();
 }));
 //#endregion
-//#region node_modules/react-dom/client.js
+//#region ../../node_modules/react-dom/client.js
 var require_client = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var m = require_react_dom();
 	exports.createRoot = m.createRoot;
 	exports.hydrateRoot = m.hydrateRoot;
 }));
 //#endregion
-//#region app/react-ui/src/index.css
+//#region src/index.css
 var import_react = require_react();
 var import_client = require_client();
 //#endregion
-//#region app/react-ui/src/hooks/useApi.js
+//#region src/hooks/useApi.js
 var BASE = "/AdoptionService";
+async function checkResponse(r) {
+	if (!r.ok) {
+		let msg = `HTTP ${r.status}`;
+		try {
+			const j = await r.json();
+			msg = j?.error?.message || j?.message || msg;
+		} catch {}
+		throw new Error(msg);
+	}
+	return r;
+}
 async function apiGet(path) {
-	const r = await fetch(`${BASE}${path}`);
-	if (!r.ok) throw new Error(r.statusText);
-	const d = await r.json();
+	const d = await (await checkResponse(await fetch(`${BASE}${path}`))).json();
 	return d.value ?? d;
 }
 async function apiPost(path, body) {
-	const r = await fetch(`${BASE}${path}`, {
+	return (await checkResponse(await fetch(`${BASE}${path}`, {
 		method: "POST",
 		headers: { "Content-Type": "application/json" },
 		body: JSON.stringify(body)
-	});
-	if (!r.ok) throw new Error(r.statusText);
-	return r.json();
+	}))).json();
 }
 async function apiPatch(path, body) {
-	const r = await fetch(`${BASE}${path}`, {
+	const r = await checkResponse(await fetch(`${BASE}${path}`, {
 		method: "PATCH",
 		headers: { "Content-Type": "application/json" },
 		body: JSON.stringify(body)
-	});
-	if (!r.ok) throw new Error(r.statusText);
+	}));
 	return r.status === 204 ? null : r.json();
 }
 //#endregion
-//#region node_modules/react/cjs/react-jsx-runtime.production.min.js
+//#region ../../node_modules/react/cjs/react-jsx-runtime.production.min.js
 /**
 * @license React
 * react-jsx-runtime.production.min.js
@@ -7591,7 +7597,7 @@ var require_react_jsx_runtime_production_min = /* @__PURE__ */ __commonJSMin(((e
 	exports.jsxs = q;
 }));
 //#endregion
-//#region app/react-ui/src/components/Modal.jsx
+//#region src/components/Modal.jsx
 var import_jsx_runtime = (/* @__PURE__ */ __commonJSMin(((exports, module) => {
 	module.exports = require_react_jsx_runtime_production_min();
 })))();
@@ -7627,7 +7633,7 @@ function Modal({ title, onClose, children }) {
 	});
 }
 //#endregion
-//#region app/react-ui/src/pages/CoEDashboard.jsx
+//#region src/pages/CoEDashboard.jsx
 var TIER_COLORS$2 = {
 	ActiveAdopter: "#107e3e",
 	OccasionalUser: "#e9730c",
@@ -8294,7 +8300,7 @@ function CoEDashboard() {
 	});
 }
 //#endregion
-//#region app/react-ui/src/pages/PracticeLeadDashboard.jsx
+//#region src/pages/PracticeLeadDashboard.jsx
 var TIER_COLORS$1 = {
 	ActiveAdopter: "#107e3e",
 	OccasionalUser: "#e9730c",
@@ -8949,9 +8955,6 @@ function PracticeLeadDashboard({ currentUser }) {
 		]
 	});
 }
-//#endregion
-//#region app/react-ui/src/pages/ConsultantDashboard.jsx
-var MY_CONSULTANT_ID = "238251a7-2498-4d41-ba9e-1061c91cc8fd";
 var TIER_COLORS = {
 	ActiveAdopter: {
 		bg: "#107e3e",
@@ -8984,29 +8987,36 @@ var TOOL_LINKS = {
 	J4D: "https://www.sap.com/products/artificial-intelligence/ai-assistant.html",
 	EKX: "https://www.sap.com/products/artificial-intelligence.html"
 };
-function ConsultantDashboard() {
+function ConsultantDashboard({ currentUser }) {
+	const consultantID = currentUser?.id ?? "238251a7-2498-4d41-ba9e-1061c91cc8fd";
 	const [consultant, setConsultant] = (0, import_react.useState)(null);
 	const [sessions, setSessions] = (0, import_react.useState)([]);
 	const [peer, setPeer] = (0, import_react.useState)(null);
 	const [notifications, setNotifications] = (0, import_react.useState)([]);
 	const [tools, setTools] = (0, import_react.useState)([]);
 	const [loading, setLoading] = (0, import_react.useState)(true);
+	const [error, setError] = (0, import_react.useState)(null);
 	const [modal, setModal] = (0, import_react.useState)(null);
 	(0, import_react.useEffect)(() => {
+		setLoading(true);
+		setError(null);
 		Promise.all([
-			apiGet(`/Consultants('${MY_CONSULTANT_ID}')?$expand=sessions($expand=tool)`),
-			apiGet(`/getPeerComparison(consultantID=${MY_CONSULTANT_ID})`),
-			apiGet(`/Notifications?$filter=consultant_ID eq ${MY_CONSULTANT_ID}&$orderby=createdAt desc`),
+			apiGet(`/Consultants('${consultantID}')?$expand=sessions($expand=tool)`),
+			apiGet(`/getPeerComparison(consultantID=${consultantID})`),
+			apiGet(`/Notifications?$filter=consultant_ID eq ${consultantID}`),
 			apiGet("/AITools")
 		]).then(([c, p, n, t]) => {
 			setConsultant(c);
 			setSessions(c.sessions ?? []);
 			setPeer(p);
-			setNotifications(n);
-			setTools(t);
+			setNotifications(n.value ?? n ?? []);
+			setTools(t.value ?? t ?? []);
 			setLoading(false);
-		}).catch(() => setLoading(false));
-	}, []);
+		}).catch((e) => {
+			setError(e.message);
+			setLoading(false);
+		});
+	}, [consultantID]);
 	async function markRead(notifID) {
 		await apiPatch(`/Notifications('${notifID}')`, { isRead: true });
 		setNotifications((prev) => prev.map((n) => n.ID === notifID ? {
@@ -9018,9 +9028,13 @@ function ConsultantDashboard() {
 		className: "loading",
 		children: "Loading your dashboard..."
 	});
-	if (!consultant) return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+	if (error) return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 		className: "error",
-		children: "Could not load your profile."
+		children: ["Could not load your profile: ", error]
+	});
+	if (!consultant) return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+		className: "error",
+		children: ["Profile not found for ID: ", consultantID]
 	});
 	const tier = consultant.adoptionTier ?? "NonAdopter";
 	const tierInfo = TIER_COLORS[tier] ?? {
@@ -9661,7 +9675,7 @@ function ConsultantDashboard() {
 	});
 }
 //#endregion
-//#region app/react-ui/src/pages/LogSession.jsx
+//#region src/pages/LogSession.jsx
 var TASK_TYPES = [
 	"DocumentDrafting",
 	"CodeReview",
@@ -9855,7 +9869,7 @@ function LogSession() {
 	});
 }
 //#endregion
-//#region app/react-ui/src/App.jsx
+//#region src/App.jsx
 var DEMO_USERS = [
 	{
 		id: "238251a7-2498-4d41-ba9e-1061c91cc8fd",
@@ -9950,7 +9964,7 @@ function App() {
 						children: item.label
 					}, item.key))
 				}),
-				/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+				window.self !== window.top && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
 					className: "shell-actions",
 					children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
 						className: "open-browser-btn",
@@ -9984,13 +9998,13 @@ function App() {
 			children: [
 				activePage === "coe" && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(CoEDashboard, {}),
 				activePage === "lead" && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(PracticeLeadDashboard, { currentUser }),
-				activePage === "self" && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ConsultantDashboard, {}),
-				activePage === "log" && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(LogSession, {})
+				activePage === "self" && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ConsultantDashboard, { currentUser }),
+				activePage === "log" && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(LogSession, { currentUser })
 			]
 		})]
 	});
 }
 //#endregion
-//#region app/react-ui/src/main.jsx
+//#region src/main.jsx
 (0, import_client.createRoot)(document.getElementById("root")).render(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_react.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(App, {}) }));
 //#endregion
