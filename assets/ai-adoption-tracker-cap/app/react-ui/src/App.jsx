@@ -69,13 +69,16 @@ export default function App() {
             </button>
           ))}
         </nav>
-        <div className="shell-actions">
-          <button
-            className="open-browser-btn"
-            title="Open in browser"
-            onClick={() => window.open(window.location.href, '_blank')}
-          >↗ Open in Browser</button>
-        </div>
+        {/* Only show Open in Browser when running inside an iframe (e.g. Joule Work preview) */}
+        {window.self !== window.top && (
+          <div className="shell-actions">
+            <button
+              className="open-browser-btn"
+              title="Open in browser"
+              onClick={() => window.open(window.location.href, '_blank')}
+            >↗ Open in Browser</button>
+          </div>
+        )}
         <div className="shell-user">
           <select
             value={currentUser.id}
@@ -94,8 +97,8 @@ export default function App() {
       <main className="main-content">
         {activePage === 'coe'  && <CoEDashboard />}
         {activePage === 'lead' && <PracticeLeadDashboard currentUser={currentUser} />}
-        {activePage === 'self' && <ConsultantDashboard />}
-        {activePage === 'log'  && <LogSession />}
+        {activePage === 'self' && <ConsultantDashboard currentUser={currentUser} />}
+        {activePage === 'log'  && <LogSession currentUser={currentUser} />}
       </main>
     </div>
   )
