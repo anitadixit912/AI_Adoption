@@ -8,8 +8,5 @@
   },
   "folders": {
     "app": "app/react-ui/dist"
-  },
-  "build": {
-    "target": "."
   }
 }
