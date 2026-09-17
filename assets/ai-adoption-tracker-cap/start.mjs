@@ -21,12 +21,15 @@ try {
   console.warn('[start] UI build failed, using existing dist if available.')
 }
 
-// Start CDS server
+// Start CDS server using local node_modules
+const cdsBin = resolve(__dirname, 'node_modules/.bin/cds')
 console.log('[start] Starting CDS server...')
-const cds = spawn('cds', ['serve'], {
+const port = process.env.PORT || 4004
+const cds = spawn('node', [cdsBin, 'serve', '--port', port], {
   cwd: __dirname,
   stdio: 'inherit',
-  shell: true
+  shell: false,
+  env: { ...process.env, PORT: port }
 })
 
 cds.on('exit', code => process.exit(code ?? 0))
