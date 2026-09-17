@@ -19,7 +19,14 @@ export default defineConfig({
     transformer: 'postcss'
   },
   build: {
-    cssMinify: false
+    cssMinify: false,
+    rollupOptions: {
+      output: {
+        entryFileNames: 'assets/[name]-[hash]-v2.js',
+        chunkFileNames: 'assets/[name]-[hash]-v2.js',
+        assetFileNames: 'assets/[name]-[hash]-v2.[ext]'
+      }
+    }
   },
   server: {
     proxy: {

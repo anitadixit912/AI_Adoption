@@ -14,6 +14,42 @@ import { runNudgeNotifications } from './jobs/nudge-notifications.js'
 
 const LOG = cds.log('adoption-service')
 
+/**
+ * Shift all seed session dates so they are always relative to today.
+ * This prevents demo data from going stale — sessions that should be
+ * "within 30 days" will always remain within 30 days regardless of
+ * when the app is started.
+ *
+ * Strategy: find the most recent session date across all data, calculate
+ * the offset to today, and shift every session date by that offset.
+ * This preserves the relative spacing between sessions.
+ */
+async function normaliseSeedDates() {
+  const { UsageSessions } = cds.entities('adoption')
+  const today = new Date().toISOString().split('T')[0]
+
+  const [latest] = await SELECT.from(UsageSessions)
+    .columns('sessionDate')
+    .orderBy({ sessionDate: 'desc' })
+    .limit(1)
+
+  if (!latest?.sessionDate) return
+  if (latest.sessionDate >= today) return // already up to date
+
+  const offsetDays = Math.floor(
+    (new Date(today) - new Date(latest.sessionDate)) / (1000 * 60 * 60 * 24)
+  )
+  if (offsetDays <= 0) return
+
+  const allSessions = await SELECT.from(UsageSessions).columns('ID', 'sessionDate')
+  for (const s of allSessions) {
+    const shifted = new Date(new Date(s.sessionDate).getTime() + offsetDays * 24 * 60 * 60 * 1000)
+      .toISOString().split('T')[0]
+    await UPDATE(UsageSessions, s.ID).with({ sessionDate: shifted })
+  }
+  LOG.info(`Seed dates normalised — shifted ${allSessions.length} sessions by ${offsetDays} days`)
+}
+
 // ── Scheduling helpers ─────────────────────────────────────────────────────
 function msUntilNextUtcTime(hour, minute) {
   const now = new Date()
@@ -150,6 +186,10 @@ export default class AdoptionService extends cds.ApplicationService {
     if (process.env.NODE_ENV === 'test' || cds.env.profiles?.includes?.('test')) return await super.init()
 
     cds.on('served', () => {
+      // Normalise seed data dates relative to today, then classify
+      normaliseSeedDates()
+        .then(() => runClassification())
+        .catch(e => LOG.error('Startup normalisation/classification failed', e))
       scheduleDaily(1, 0, 'Daily ingestion', async () => {
         await ingestBTPAuditLog().catch(e => LOG.error('BTP ingestion failed', e))
         await ingestAICore().catch(e => LOG.error('AI Core ingestion failed', e))
