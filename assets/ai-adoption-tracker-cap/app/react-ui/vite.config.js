@@ -1,16 +1,26 @@
 import { defineConfig } from 'vite'
-import AdmZip from 'adm-zip'
 import react from '@vitejs/plugin-react'
+import { fileURLToPath } from 'url'
+import { dirname, resolve } from 'path'
+
+const __dirname = dirname(fileURLToPath(import.meta.url))
+const rootModules = resolve(__dirname, '../../node_modules')
 
 export default defineConfig({
-  plugins: [react(), {
-      name: 'zip-dist', // zipping ./dist is required for BTP HTML5 repo or Application Frontend deployment
-      closeBundle() {
-        const zip = new AdmZip()
-        zip.addLocalFolder('dist')
-        zip.writeZip('dist/catalog.zip')
-      }
-  }],
+  plugins: [react()],
+  resolve: {
+    alias: {
+      react: resolve(rootModules, 'react'),
+      'react-dom': resolve(rootModules, 'react-dom'),
+      'react/jsx-runtime': resolve(rootModules, 'react/jsx-runtime')
+    }
+  },
+  css: {
+    transformer: 'postcss'
+  },
+  build: {
+    cssMinify: false
+  },
   server: {
     proxy: {
       '/AdoptionService': 'http://localhost:4004'

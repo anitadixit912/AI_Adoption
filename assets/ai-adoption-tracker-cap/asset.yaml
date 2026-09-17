@@ -14,8 +14,9 @@ provides:
 container:
   buildPath: .
   port: 4004
-  startCommand: cds serve
-  healthCheckPath: /
+  startCommand: npm start
+  healthCheckPath: /AdoptionService
   env:
     PORT: "4004"
+    NODE_ENV: development
     CDS_LOG_LEVELS: info

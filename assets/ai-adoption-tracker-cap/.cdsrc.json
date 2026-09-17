@@ -1,0 +1,12 @@
+{
+  "requires": {
+    "auth": "dummy",
+    "db": {
+      "kind": "sqlite",
+      "credentials": { "url": ":memory:" }
+    }
+  },
+  "folders": {
+    "app": "app/react-ui/dist"
+  }
+}
