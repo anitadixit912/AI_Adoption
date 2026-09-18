@@ -8319,6 +8319,51 @@ var INTENSITY_COLORS = [
 	"#66b3ff",
 	"#0057b8"
 ];
+var ENR_AVG_ADOPTION_PCT = 57;
+var USE_CASES = [
+	{
+		rank: 1,
+		useCase: "SAP process & configuration research",
+		tool: "EKX",
+		consultants: 14,
+		avgHrs: 3.2
+	},
+	{
+		rank: 2,
+		useCase: "Functional specification drafting",
+		tool: "J4C",
+		consultants: 11,
+		avgHrs: 2.8
+	},
+	{
+		rank: 3,
+		useCase: "ABAP code analysis & interpretation",
+		tool: "J4D",
+		consultants: 7,
+		avgHrs: 2.5
+	},
+	{
+		rank: 4,
+		useCase: "Business process review documentation",
+		tool: "J4C + EKX",
+		consultants: 9,
+		avgHrs: 2.2
+	},
+	{
+		rank: 5,
+		useCase: "Solution design exploration",
+		tool: "EKX",
+		consultants: 8,
+		avgHrs: 2
+	},
+	{
+		rank: 6,
+		useCase: "Meeting prep & email summarisation",
+		tool: "Joule Desktop",
+		consultants: 10,
+		avgHrs: 1.8
+	}
+];
 function PracticeLeadDashboard({ currentUser }) {
 	const [heatmap, setHeatmap] = (0, import_react.useState)([]);
 	const [nonAdopters, setNonAdopters] = (0, import_react.useState)([]);
@@ -8328,6 +8373,8 @@ function PracticeLeadDashboard({ currentUser }) {
 	const [buFilter, setBuFilter] = (0, import_react.useState)("");
 	const [allBUs, setAllBUs] = (0, import_react.useState)([]);
 	const [modal, setModal] = (0, import_react.useState)(null);
+	const [tierPanelOpen, setTierPanelOpen] = (0, import_react.useState)(false);
+	const [trendPeriod, setTrendPeriod] = (0, import_react.useState)("weekly");
 	const leadID = currentUser?.ID ?? "bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb";
 	(0, import_react.useEffect)(() => {
 		Promise.all([
@@ -8346,8 +8393,92 @@ function PracticeLeadDashboard({ currentUser }) {
 	const filteredHeatmap = buFilter ? heatmap.filter((c) => c.businessUnit === buFilter) : heatmap;
 	const totalTeam = heatmap.length;
 	const activeCount = heatmap.filter((c) => c.adoptionTier === "ActiveAdopter").length;
-	const atRiskCount = heatmap.filter((c) => c.adoptionTier === "LapsedUser" || c.adoptionTier === "NonAdopter").length;
+	const occasionalCount = heatmap.filter((c) => c.adoptionTier === "OccasionalUser").length;
+	const lapsedCount = heatmap.filter((c) => c.adoptionTier === "LapsedUser").length;
+	const nonAdopterCount = heatmap.filter((c) => c.adoptionTier === "NonAdopter").length;
+	lapsedCount + nonAdopterCount;
 	const adoptionPct = totalTeam ? Math.round(activeCount / totalTeam * 100) : 0;
+	const weeklyActivePct = totalTeam ? Math.round((activeCount + occasionalCount) / totalTeam * 100) : 0;
+	const diffVsEnr = adoptionPct - ENR_AVG_ADOPTION_PCT;
+	const neverUsed = nonAdopters.filter((c) => c.daysInactive >= 999).length;
+	const lapsed30 = nonAdopters.filter((c) => c.daysInactive < 999).length;
+	const toolAdoptionRates = tools.map((toolName) => {
+		const usersWithSessions = heatmap.filter((c) => c.toolUsage?.find((t) => t.toolName === toolName && t.sessionCount > 0)).length;
+		return {
+			toolName,
+			pct: totalTeam ? Math.round(usersWithSessions / totalTeam * 100) : 0
+		};
+	}).sort((a, b) => b.pct - a.pct);
+	const avgHrsSaved = 3.4;
+	const trendData = trendPeriod === "weekly" ? [
+		{
+			label: "W-6",
+			team: 52,
+			enr: 54
+		},
+		{
+			label: "W-5",
+			team: 55,
+			enr: 55
+		},
+		{
+			label: "W-4",
+			team: 58,
+			enr: 55
+		},
+		{
+			label: "W-3",
+			team: 60,
+			enr: 56
+		},
+		{
+			label: "W-2",
+			team: 62,
+			enr: 56
+		},
+		{
+			label: "W-1",
+			team: 65,
+			enr: 57
+		},
+		{
+			label: "Now",
+			team: adoptionPct,
+			enr: ENR_AVG_ADOPTION_PCT
+		}
+	] : [
+		{
+			label: "Apr",
+			team: 44,
+			enr: 50
+		},
+		{
+			label: "May",
+			team: 48,
+			enr: 51
+		},
+		{
+			label: "Jun",
+			team: 52,
+			enr: 53
+		},
+		{
+			label: "Jul",
+			team: 56,
+			enr: 54
+		},
+		{
+			label: "Aug",
+			team: 62,
+			enr: 56
+		},
+		{
+			label: "Sep",
+			team: adoptionPct,
+			enr: ENR_AVG_ADOPTION_PCT
+		}
+	];
+	const maxTrend = 100;
 	async function saveNote(consultantID) {
 		setSaving((s) => ({
 			...s,
@@ -8508,189 +8639,140 @@ function PracticeLeadDashboard({ currentUser }) {
 			}),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", {
 				className: "dashboard-subtitle",
-				children: ["Team adoption heatmap, non-adopters, and coaching notes · ", /* @__PURE__ */ (0, import_jsx_runtime.jsx)("em", {
+				children: ["Team adoption overview, heatmap, non-adopters, and coaching notes · ", /* @__PURE__ */ (0, import_jsx_runtime.jsx)("em", {
 					style: { color: "#0057b8" },
 					children: "Click any row for details"
 				})]
 			}),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+				className: "section-header",
+				children: "ADOPTION OVERVIEW"
+			}),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-				className: "kpi-grid",
+				className: "kpi-grid kpi-grid--wide",
 				children: [
 					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-						className: "kpi-card clickable",
-						onClick: () => setModal({
-							title: "Team Size",
-							content: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [
-								/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-									className: "modal-row",
-									children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-										className: "modal-label",
-										children: "Total consultants"
-									}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-										className: "modal-value",
-										children: totalTeam
-									})]
-								}),
-								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-									className: "modal-section-title",
-									children: "By Business Unit"
-								}),
-								allBUs.map((bu) => {
-									const count = heatmap.filter((c) => c.businessUnit === bu).length;
-									return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-										className: "modal-row",
-										children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-											className: "modal-label",
-											children: bu
-										}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-											className: "modal-value",
-											children: count
-										})]
-									}, bu);
-								})
-							] })
-						}),
+						className: "kpi-card kpi-card--highlight",
 						children: [
 							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
 								className: "kpi-label",
-								children: "Team Size"
-							}),
-							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-								className: "kpi-value",
-								style: { color: "#0057b8" },
-								children: totalTeam
-							}),
-							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-								className: "kpi-sub",
-								children: "consultants in your team ↗"
-							})
-						]
-					}),
-					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-						className: "kpi-card clickable",
-						onClick: () => setModal({
-							title: "Active Adopters",
-							content: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [
-								/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-									className: "modal-row",
-									children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-										className: "modal-label",
-										children: "Active Adopters"
-									}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-										className: "modal-value",
-										children: activeCount
-									})]
-								}),
-								/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-									className: "modal-row",
-									children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-										className: "modal-label",
-										children: "% of team"
-									}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
-										className: "modal-value",
-										children: [adoptionPct, "%"]
-									})]
-								}),
-								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-									className: "modal-section-title",
-									children: "Active team members"
-								}),
-								heatmap.filter((c) => c.adoptionTier === "ActiveAdopter").map((c) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-									className: "modal-row",
-									children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-										className: "modal-label",
-										children: c.consultantName
-									}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-										className: "modal-value",
-										children: c.businessUnit
-									})]
-								}, c.consultantID))
-							] })
-						}),
-						children: [
-							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-								className: "kpi-label",
-								children: "Active Adopters"
-							}),
-							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-								className: "kpi-value",
-								style: { color: "#107e3e" },
-								children: activeCount
+								children: "My Team Adoption Rate"
 							}),
 							/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+								className: "kpi-value",
+								style: { color: adoptionPct >= ENR_AVG_ADOPTION_PCT ? "#107e3e" : "#cc1919" },
+								children: [adoptionPct, "%"]
+							}),
+							/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+								className: "kpi-sub kpi-vs",
+								children: [
+									"vs ",
+									ENR_AVG_ADOPTION_PCT,
+									"% ENR avg\xA0",
+									/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
+										style: {
+											color: diffVsEnr >= 0 ? "#107e3e" : "#cc1919",
+											fontWeight: 700
+										},
+										children: [
+											diffVsEnr >= 0 ? "▲" : "▼",
+											" ",
+											Math.abs(diffVsEnr),
+											"pp"
+										]
+									})
+								]
+							})
+						]
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+						className: "kpi-card clickable",
+						onClick: () => setTierPanelOpen(true),
+						children: [
+							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+								className: "kpi-label",
+								children: "Active Adopters / Total"
+							}),
+							/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+								className: "kpi-value",
+								style: { color: "#107e3e" },
+								children: [
+									activeCount,
+									" ",
+									/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
+										style: {
+											fontSize: "1rem",
+											color: "#5a6a85"
+										},
+										children: ["/ ", totalTeam]
+									})
+								]
+							}),
+							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
 								className: "kpi-sub",
-								children: [adoptionPct, "% of your team ↗"]
+								children: "Click to see breakdown ↗"
+							})
+						]
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+						className: "kpi-card",
+						children: [
+							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+								className: "kpi-label",
+								children: "Weekly Active Users"
+							}),
+							/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+								className: "kpi-value",
+								style: { color: "#0057b8" },
+								children: [weeklyActivePct, "%"]
+							}),
+							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+								className: "kpi-sub",
+								children: "Active + Occasional users"
 							})
 						]
 					}),
 					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 						className: "kpi-card clickable",
 						onClick: () => setModal({
-							title: "At-Risk Consultants",
+							title: "Non-Adopter Breakdown",
 							content: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [
 								/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 									className: "modal-row",
 									children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
 										className: "modal-label",
-										children: "Lapsed + Non-Adopters"
+										children: "Total non-adopters (30 days)"
 									}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
 										className: "modal-value",
-										children: atRiskCount
+										style: { color: "#cc1919" },
+										children: nonAdopters.length
+									})]
+								}),
+								/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+									className: "modal-row",
+									children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+										className: "modal-label",
+										children: "Never used AI tools"
+									}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+										className: "modal-value",
+										children: neverUsed
+									})]
+								}),
+								/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+									className: "modal-row",
+									children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+										className: "modal-label",
+										children: "Lapsed (inactive 30+ days)"
+									}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+										className: "modal-value",
+										children: lapsed30
 									})]
 								}),
 								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
 									className: "modal-section-title",
 									children: "Who needs attention"
 								}),
-								heatmap.filter((c) => c.adoptionTier === "LapsedUser" || c.adoptionTier === "NonAdopter").map((c) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-									className: "modal-row",
-									children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-										className: "modal-label",
-										children: c.consultantName
-									}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-										className: "modal-value",
-										style: { color: TIER_COLORS$1[c.adoptionTier] },
-										children: TIER_LABELS[c.adoptionTier]
-									})]
-								}, c.consultantID))
-							] })
-						}),
-						children: [
-							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-								className: "kpi-label",
-								children: "At Risk"
-							}),
-							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-								className: "kpi-value",
-								style: { color: "#cc1919" },
-								children: atRiskCount
-							}),
-							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-								className: "kpi-sub",
-								children: "Lapsed + Non-Adopters ↗"
-							})
-						]
-					}),
-					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-						className: "kpi-card clickable",
-						onClick: () => setModal({
-							title: "Non-Adopter Alerts",
-							content: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [
-								/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-									className: "modal-row",
-									children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-										className: "modal-label",
-										children: "Inactive 30+ days"
-									}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-										className: "modal-value",
-										children: nonAdopters.length
-									})]
-								}),
-								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-									className: "modal-section-title",
-									children: "Action required"
-								}),
-								nonAdopters.slice(0, 10).map((c) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+								nonAdopters.map((c) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 									className: "modal-row",
 									children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
 										className: "modal-label",
@@ -8698,7 +8780,7 @@ function PracticeLeadDashboard({ currentUser }) {
 									}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
 										className: "modal-value",
 										style: { color: "#cc1919" },
-										children: c.daysInactive >= 999 ? "Never" : `${c.daysInactive}d`
+										children: c.daysInactive >= 999 ? "Never" : `${c.daysInactive}d inactive`
 									})]
 								}, c.consultantID))
 							] })
@@ -8706,20 +8788,349 @@ function PracticeLeadDashboard({ currentUser }) {
 						children: [
 							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
 								className: "kpi-label",
-								children: "Inactivity Alerts"
+								children: "Non-Adopters (30 days)"
 							}),
 							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
 								className: "kpi-value",
-								style: { color: "#e9730c" },
+								style: { color: "#cc1919" },
 								children: nonAdopters.length
+							}),
+							/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+								className: "kpi-sub",
+								children: [
+									neverUsed,
+									" never used · ",
+									lapsed30,
+									" lapsed ↗"
+								]
+							})
+						]
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+						className: "kpi-card",
+						children: [
+							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+								className: "kpi-label",
+								children: "Avg Hours Saved / Week"
+							}),
+							/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+								className: "kpi-value",
+								style: { color: "#107e3e" },
+								children: [avgHrsSaved, " hrs"]
 							}),
 							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
 								className: "kpi-sub",
-								children: "need follow-up ↗"
+								children: "Self-reported by team"
 							})
 						]
 					})
 				]
+			}),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+				className: "section-card",
+				style: { marginBottom: 16 },
+				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+					style: {
+						display: "flex",
+						justifyContent: "space-between",
+						alignItems: "center",
+						marginBottom: 12
+					},
+					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", { children: "Adoption Tier Breakdown" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+						className: "panel-toggle-btn",
+						onClick: () => setTierPanelOpen(true),
+						children: "View Detail ↗"
+					})]
+				}), [
+					{
+						tier: "ActiveAdopter",
+						count: activeCount
+					},
+					{
+						tier: "OccasionalUser",
+						count: occasionalCount
+					},
+					{
+						tier: "LapsedUser",
+						count: lapsedCount
+					},
+					{
+						tier: "NonAdopter",
+						count: nonAdopterCount
+					}
+				].map(({ tier, count }) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+					className: "tier-row clickable",
+					onClick: () => setTierPanelOpen(true),
+					children: [
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+							className: "tier-badge",
+							style: { background: TIER_COLORS$1[tier] },
+							children: TIER_LABELS[tier]
+						}),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+							className: "tier-bar-wrap",
+							children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+								className: "tier-bar",
+								style: {
+									width: `${totalTeam ? count / totalTeam * 100 : 0}%`,
+									background: TIER_COLORS$1[tier]
+								}
+							})
+						}),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+							className: "tier-count",
+							children: count
+						}),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
+							style: {
+								fontSize: "0.78rem",
+								color: "#5a6a85",
+								minWidth: 36
+							},
+							children: [
+								"(",
+								totalTeam ? Math.round(count / totalTeam * 100) : 0,
+								"%)"
+							]
+						})
+					]
+				}, tier))]
+			}),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+				className: "section-card",
+				style: { marginBottom: 16 },
+				children: [
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", { children: "Tool-by-Tool Adoption Rate" }),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+						className: "chart-note",
+						children: "% of team with at least 1 session in last 30 days"
+					}),
+					toolAdoptionRates.map(({ toolName, pct }) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+						className: "tier-row",
+						children: [
+							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+								className: "tool-name",
+								style: { minWidth: 80 },
+								children: toolName
+							}),
+							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+								className: "tier-bar-wrap",
+								children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+									className: "tier-bar",
+									style: {
+										width: `${pct}%`,
+										background: "#0057b8"
+									}
+								})
+							}),
+							/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
+								className: "tier-count",
+								style: { color: "#0057b8" },
+								children: [pct, "%"]
+							})
+						]
+					}, toolName))
+				]
+			}),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+				className: "section-header",
+				children: "ADOPTION TREND"
+			}),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+				className: "section-card",
+				style: { marginBottom: 16 },
+				children: [
+					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+						style: {
+							display: "flex",
+							justifyContent: "space-between",
+							alignItems: "center",
+							marginBottom: 12
+						},
+						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", { children: "Adoption Rate Over Time" }), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+							className: "toggle-group",
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+								className: `toggle-btn ${trendPeriod === "weekly" ? "toggle-btn--active" : ""}`,
+								onClick: () => setTrendPeriod("weekly"),
+								children: "Weekly"
+							}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+								className: `toggle-btn ${trendPeriod === "monthly" ? "toggle-btn--active" : ""}`,
+								onClick: () => setTrendPeriod("monthly"),
+								children: "Monthly"
+							})]
+						})]
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+						style: {
+							display: "flex",
+							alignItems: "flex-end",
+							gap: 8,
+							height: 140,
+							paddingBottom: 24,
+							position: "relative"
+						},
+						children: trendData.map((d, i) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+							style: {
+								flex: 1,
+								display: "flex",
+								flexDirection: "column",
+								alignItems: "center",
+								gap: 2
+							},
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+								style: {
+									display: "flex",
+									gap: 3,
+									alignItems: "flex-end",
+									width: "100%",
+									justifyContent: "center"
+								},
+								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+									title: `Team: ${d.team}%`,
+									style: {
+										width: 14,
+										height: `${d.team / maxTrend * 120}px`,
+										background: "#0057b8",
+										borderRadius: "3px 3px 0 0",
+										minHeight: 4
+									}
+								}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+									title: `ENR avg: ${d.enr}%`,
+									style: {
+										width: 14,
+										height: `${d.enr / maxTrend * 120}px`,
+										background: "#90aecb",
+										borderRadius: "3px 3px 0 0",
+										minHeight: 4
+									}
+								})]
+							}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+								style: {
+									fontSize: "0.7rem",
+									color: "#5a6a85",
+									marginTop: 4
+								},
+								children: d.label
+							})]
+						}, i))
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+						style: {
+							display: "flex",
+							gap: 16,
+							marginTop: 4
+						},
+						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
+							style: {
+								display: "flex",
+								alignItems: "center",
+								gap: 4,
+								fontSize: "0.78rem"
+							},
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { style: {
+								width: 12,
+								height: 12,
+								background: "#0057b8",
+								borderRadius: 2,
+								display: "inline-block"
+							} }), " My Team"]
+						}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
+							style: {
+								display: "flex",
+								alignItems: "center",
+								gap: 4,
+								fontSize: "0.78rem"
+							},
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { style: {
+								width: 12,
+								height: 12,
+								background: "#90aecb",
+								borderRadius: 2,
+								display: "inline-block"
+							} }), " ENR Average"]
+						})]
+					})
+				]
+			}),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+				className: "section-header",
+				children: "EFFICIENCY INSIGHTS"
+			}),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+				className: "section-card",
+				style: { marginBottom: 16 },
+				children: [
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", { children: "Top Use Cases — Where AI Helps My Team Most" }),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+						className: "chart-note",
+						children: "Ranked by average hours saved per week · Self-reported, September 2026 survey"
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+						style: { overflowX: "auto" },
+						children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("table", {
+							className: "use-case-table",
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("thead", { children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("tr", { children: [
+								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("th", { children: "#" }),
+								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("th", { children: "Use Case" }),
+								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("th", { children: "Primary Tool" }),
+								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("th", { children: "Consultants Using" }),
+								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("th", { children: "Avg Hrs Saved/Week" })
+							] }) }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("tbody", { children: USE_CASES.map((u) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("tr", { children: [
+								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("td", {
+									style: {
+										fontWeight: 700,
+										color: "#0057b8",
+										textAlign: "center"
+									},
+									children: u.rank
+								}),
+								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("td", { children: u.useCase }),
+								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("td", { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+									className: "tool-tag",
+									children: u.tool
+								}) }),
+								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("td", {
+									style: { textAlign: "center" },
+									children: u.consultants
+								}),
+								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("td", { children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+									style: {
+										display: "flex",
+										alignItems: "center",
+										gap: 8
+									},
+									children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+										style: {
+											flex: 1,
+											background: "#f0f0f0",
+											borderRadius: 4,
+											height: 10,
+											overflow: "hidden",
+											minWidth: 80
+										},
+										children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: {
+											width: `${u.avgHrs / 3.5 * 100}%`,
+											background: "#107e3e",
+											height: "100%",
+											borderRadius: 4
+										} })
+									}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
+										style: {
+											fontWeight: 700,
+											color: "#107e3e",
+											minWidth: 44
+										},
+										children: [u.avgHrs, " hrs"]
+									})]
+								}) })
+							] }, u.rank)) })]
+						})
+					})
+				]
+			}),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+				className: "section-header",
+				children: "TEAM HEATMAP"
 			}),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 				className: "filter-bar",
@@ -8946,6 +9357,122 @@ function PracticeLeadDashboard({ currentUser }) {
 						]
 					}, c.consultantID)) })]
 				})]
+			}),
+			tierPanelOpen && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+				className: "slide-panel-overlay",
+				onClick: () => setTierPanelOpen(false),
+				children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+					className: "slide-panel",
+					onClick: (e) => e.stopPropagation(),
+					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+						className: "slide-panel-header",
+						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+							className: "slide-panel-title",
+							children: "Adoption Tier Breakdown"
+						}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+							className: "modal-close",
+							onClick: () => setTierPanelOpen(false),
+							children: "✕"
+						})]
+					}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+						className: "slide-panel-body",
+						children: [
+							{
+								tier: "ActiveAdopter",
+								count: activeCount
+							},
+							{
+								tier: "OccasionalUser",
+								count: occasionalCount
+							},
+							{
+								tier: "LapsedUser",
+								count: lapsedCount
+							},
+							{
+								tier: "NonAdopter",
+								count: nonAdopterCount
+							}
+						].map(({ tier, count }) => {
+							const members = heatmap.filter((c) => c.adoptionTier === tier);
+							return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+								style: { marginBottom: 20 },
+								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+									style: {
+										display: "flex",
+										alignItems: "center",
+										gap: 10,
+										marginBottom: 8
+									},
+									children: [
+										/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+											className: "tier-badge",
+											style: { background: TIER_COLORS$1[tier] },
+											children: TIER_LABELS[tier]
+										}),
+										/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+											style: {
+												fontWeight: 700,
+												color: TIER_COLORS$1[tier]
+											},
+											children: count
+										}),
+										/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
+											style: {
+												fontSize: "0.78rem",
+												color: "#5a6a85"
+											},
+											children: [
+												"(",
+												totalTeam ? Math.round(count / totalTeam * 100) : 0,
+												"%)"
+											]
+										})
+									]
+								}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("table", {
+									className: "tier-detail-table",
+									children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("thead", { children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("tr", { children: [
+										/* @__PURE__ */ (0, import_jsx_runtime.jsx)("th", { children: "Consultant" }),
+										/* @__PURE__ */ (0, import_jsx_runtime.jsx)("th", { children: "Last Activity" }),
+										/* @__PURE__ */ (0, import_jsx_runtime.jsx)("th", { children: "Tools Used (30 days)" })
+									] }) }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("tbody", { children: members.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("tr", { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("td", {
+										colSpan: 3,
+										style: {
+											color: "#5a6a85",
+											fontStyle: "italic"
+										},
+										children: "None"
+									}) }) : members.map((c) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("tr", { children: [
+										/* @__PURE__ */ (0, import_jsx_runtime.jsx)("td", {
+											style: { fontWeight: 600 },
+											children: c.consultantName
+										}),
+										/* @__PURE__ */ (0, import_jsx_runtime.jsx)("td", {
+											style: { color: "#5a6a85" },
+											children: c.lastActivityDate ?? "—"
+										}),
+										/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("td", { children: [c.toolUsage?.filter((t) => t.sessionCount > 0).map((t) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
+											className: "tool-tag",
+											style: { marginRight: 4 },
+											children: [
+												t.toolName,
+												" (",
+												t.sessionCount,
+												")"
+											]
+										}, t.toolName)), !c.toolUsage?.some((t) => t.sessionCount > 0) && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+											style: {
+												color: "#aaa",
+												fontSize: "0.78rem"
+											},
+											children: "None"
+										})] })
+									] }, c.consultantID)) })]
+								})]
+							}, tier);
+						})
+					})]
+				})
 			}),
 			modal && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Modal, {
 				title: modal.title,
