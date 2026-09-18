@@ -279,6 +279,51 @@ A custom CAP (Cloud Application Programming Model) Node.js application deployed 
 
 ---
 
+## Phase 2 — Planned Enhancements
+
+### R11: Adoption Overview — Enriched Key Metrics
+- **Problem to Solve**: The current Adoption Overview shows basic data. Practice Leads need richer at-a-glance metrics to understand team health without drilling down.
+- **User Story**: As a Practice Lead, I need to see my team's adoption rate vs the ENR average, active adopter counts, weekly active users, non-adopter breakdown, and average hours saved, so that I can assess team health instantly.
+- **Acceptance Criteria**:
+  - Shows My Team Adoption Rate (%) with delta vs ENR practice average (e.g. 68% vs 57% ENR avg ▲ +11pp)
+  - Shows Active Adopters count / Total Team (e.g. 17 / 25)
+  - Shows Weekly Active Users (%)
+  - Shows Non-Adopters count broken down by never-used vs lapsed (e.g. 3 never-used + 1 lapsed)
+  - Shows Average Hours Saved per Week (self-reported by team)
+  - Shows Tool-by-Tool Adoption Rates (EKX, J4C, Joule Desktop, J4D)
+- **Priority Rank**: 11
+
+### R12: Adoption Tier Breakdown — Drilldown Table
+- **Problem to Solve**: The tier breakdown currently shows summary counts only. Practice Leads need to see exactly which consultants are in each tier.
+- **User Story**: As a Practice Lead, I need to click on the Adoption Tier Breakdown and see a detailed table of consultants per tier so that I know exactly who to focus on.
+- **Acceptance Criteria**:
+  - Clicking the Adoption Tier Breakdown opens a detailed view (slide-in panel or new screen)
+  - Table shows each consultant: name, tier, last activity date, tools used, session count
+  - View is filterable by tier (Active, Occasional, Lapsed, Non-Adopter)
+- **Priority Rank**: 12
+
+### R13: Adoption Trend Graph
+- **Problem to Solve**: Practice Leads cannot see whether adoption is improving or declining over time.
+- **User Story**: As a Practice Lead, I need a trend graph showing my team's adoption rate over time vs the ENR average so that I can see if our efforts are working.
+- **Acceptance Criteria**:
+  - Line chart showing weekly or monthly adoption rate trend for the team
+  - Overlaid ENR practice average trend line for comparison
+  - Visible on the Practice Lead dashboard
+- **Priority Rank**: 13
+
+### R14: Efficiency Insights — Top Use Cases Section
+- **Problem to Solve**: Practice Leads know adoption rates but not where AI is actually helping the team. Concrete use case data builds the business case.
+- **User Story**: As a Practice Lead, I need to see where AI helps my team most — ranked by hours saved — so that I can share concrete ROI evidence and encourage broader adoption.
+- **Acceptance Criteria**:
+  - New section on Practice Lead dashboard: "Where AI Helps My Team Most"
+  - Table with columns: Rank, Use Case, Primary Tool, Consultants Using, Avg Hrs Saved/Week
+  - Ranked by average hours saved per week (self-reported)
+  - Horizontal bar chart visual comparison of hours saved per use case shown below the table
+  - Example use cases: SAP process research (EKX, 3.2 hrs), Functional spec drafting (J4C, 2.8 hrs), ABAP code analysis (J4D, 2.5 hrs), Business process review (J4C + EKX, 2.2 hrs), Solution design (EKX, 2.0 hrs), Meeting prep (Joule Desktop, 1.8 hrs)
+- **Priority Rank**: 14
+
+---
+
 ## Risks, Assumptions, and Dependencies
 
 ### Risks

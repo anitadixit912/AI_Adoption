@@ -72,6 +72,35 @@ Tracking AI tool adoption maps to the Governance E2E — specifically IT Governa
 - The adoption classification logic (Active Adopter / Occasional User / Non-Adopter) will be implemented as computed fields in the CAP service layer.
 - In-app notifications will be stored in CAP and surfaced on the consultant's self-service dashboard; no external email or Teams integration in v1.
 
+## Planned Enhancements (Phase 2)
+
+### 1. Adoption Overview — Enriched Key Metrics (Practice Lead Dashboard)
+Display richer metrics in the Adoption Overview section:
+- My Team Adoption Rate (%) vs ENR Practice Average with percentage point delta
+- Active Adopters count / Total Team count
+- Weekly Active Users (%)
+- Non-Adopters count (30-day window) broken down by never-used vs lapsed
+- Average Hours Saved per Week (self-reported by team)
+- Tool-by-Tool Adoption Rates (EKX, J4C, Joule Desktop, J4D shown as percentages)
+
+### 2. Adoption Tier Breakdown — Drilldown Table
+Clicking the Adoption Tier Breakdown section opens a detailed table view (same screen slide-in panel or new screen — TBD) showing:
+- Each consultant's name, adoption tier, last activity date, tools used, session count
+- Filterable by tier (Active, Occasional, Lapsed, Non-Adopter)
+
+### 3. Adoption Trend Graph
+A visual trend chart on the Practice Lead dashboard showing:
+- Weekly/monthly adoption rate over time for the team
+- Team trend line vs ENR practice average trend line
+- Visual context for whether adoption is improving or declining
+
+### 4. Efficiency Insights — Top Use Cases Section
+A new section on the Practice Lead dashboard titled "Where AI Helps My Team Most":
+- Table ranked by average hours saved per week (self-reported)
+- Columns: Rank, Use Case, Primary Tool, Consultants Using, Avg Hrs Saved/Week
+- Horizontal bar chart visual comparison of hours saved per use case
+- Example use cases: SAP process research (EKX, 3.2 hrs), Functional spec drafting (J4C, 2.8 hrs), ABAP code analysis (J4D, 2.5 hrs), Business process review (J4C + EKX, 2.2 hrs), Solution design (EKX, 2.0 hrs), Meeting prep (Joule Desktop, 1.8 hrs)
+
 ## Recommendations
 
 ### AI Tool Adoption Tracker — Custom CAP Application on SAP BTP
