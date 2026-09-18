@@ -297,8 +297,133 @@ body {
 }
 .chart-note { font-size: 0.75rem; color: #5a6a85; margin: -8px 0 12px; font-style: italic; }
 
+/* ── Section Headers ─────────────────────────────────── */
+.section-header {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: #0057b8;
+  background: #f0f7ff;
+  border-left: 4px solid #0057b8;
+  padding: 6px 14px;
+  border-radius: 0 6px 6px 0;
+  margin: 20px 0 12px;
+}
+
+/* ── Wide KPI Grid ───────────────────────────────────── */
+.kpi-grid--wide {
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+}
+.kpi-card--highlight {
+  border-top: 4px solid #107e3e;
+}
+.kpi-vs { font-size: 0.8rem; margin-top: 4px; }
+
+/* ── Toggle Group ────────────────────────────────────── */
+.toggle-group { display: flex; border: 1px solid #ddd; border-radius: 6px; overflow: hidden; }
+.toggle-btn {
+  background: #fff;
+  border: none;
+  padding: 5px 14px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  color: #5a6a85;
+}
+.toggle-btn--active { background: #0057b8; color: #fff; font-weight: 600; }
+
+/* ── Panel Toggle Button ─────────────────────────────── */
+.panel-toggle-btn {
+  background: none;
+  border: 1px solid #0057b8;
+  color: #0057b8;
+  border-radius: 6px;
+  padding: 4px 12px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  font-weight: 600;
+}
+.panel-toggle-btn:hover { background: #f0f7ff; }
+
+/* ── Use Case Table ──────────────────────────────────── */
+.use-case-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+.use-case-table th {
+  background: #f4f6fb;
+  padding: 8px 10px;
+  text-align: left;
+  font-weight: 600;
+  color: #0a2540;
+  border-bottom: 2px solid #e0e0e0;
+}
+.use-case-table td { padding: 9px 10px; border-bottom: 1px solid #f0f0f0; vertical-align: middle; }
+.use-case-table tr:hover td { background: #f9fbff; }
+.tool-tag {
+  display: inline-block;
+  background: #f0f7ff;
+  border: 1px solid #cce0ff;
+  color: #0057b8;
+  border-radius: 10px;
+  padding: 2px 8px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+/* ── Slide-in Panel ──────────────────────────────────── */
+.slide-panel-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.35);
+  z-index: 1000;
+  display: flex;
+  justify-content: flex-end;
+  animation: fadeIn 0.15s ease;
+}
+.slide-panel {
+  background: #fff;
+  width: 560px;
+  max-width: 95vw;
+  height: 100%;
+  box-shadow: -4px 0 24px rgba(0,0,0,0.15);
+  display: flex;
+  flex-direction: column;
+  animation: slideInRight 0.2s ease;
+}
+@keyframes slideInRight { from { transform: translateX(100%) } to { transform: translateX(0) } }
+.slide-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 22px;
+  border-bottom: 1px solid #f0f0f0;
+  background: #f4f6fb;
+}
+.slide-panel-title { font-size: 1rem; font-weight: 700; color: #0a2540; }
+.slide-panel-body  { padding: 20px 22px; overflow-y: auto; flex: 1; }
+
+/* ── Tier Detail Table ───────────────────────────────── */
+.tier-detail-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.82rem;
+  margin-bottom: 4px;
+}
+.tier-detail-table th {
+  background: #f4f6fb;
+  padding: 6px 10px;
+  font-weight: 600;
+  color: #0a2540;
+  border-bottom: 1px solid #e0e0e0;
+  text-align: left;
+}
+.tier-detail-table td { padding: 6px 10px; border-bottom: 1px solid #f4f4f4; }
+.tier-detail-table tr:hover td { background: #f9fbff; }
+
 @media (max-width: 768px) {
   .charts-row { grid-template-columns: 1fr; }
   .kpi-grid   { grid-template-columns: 1fr 1fr; }
   .main-content { padding: 16px; }
+  .slide-panel { width: 100%; }
 }
