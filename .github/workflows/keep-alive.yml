@@ -1,0 +1,26 @@
+name: Keep App Alive
+
+on:
+  schedule:
+    - cron: '0 5 * * *'
+  workflow_dispatch:
+
+jobs:
+  start-app:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install CF CLI
+        run: |
+          curl -L "https://packages.cloudfoundry.org/stable?release=linux64-binary&version=v8&source=github" | tar -zx
+          sudo mv cf8 /usr/local/bin/cf
+          cf --version
+
+      - name: Login to Cloud Foundry
+        run: |
+          cf api https://api.cf.us10-001.hana.ondemand.com
+          cf auth "${{ secrets.CF_USERNAME }}" "${{ secrets.CF_PASSWORD }}"
+          cf target -o "${{ secrets.CF_ORG }}" -s "${{ secrets.CF_SPACE }}"
+
+      - name: Start App
+        run: |
+          cf start ai-adoption-tracker || true
