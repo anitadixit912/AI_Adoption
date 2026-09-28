@@ -66,3 +66,31 @@ entity AdoptionSnapshots : cuid {
   sessionCount  : Integer not null default 0;
   snapshotDate  : Date not null;
 }
+
+// ─── Ideas ──────────────────────────────────────────────────────────────────
+
+entity Ideas : cuid, managed {
+  title       : String(200) not null;
+  description : String(1000);
+  submitter   : Association to Consultants not null;
+  status      : String(20) default 'Submitted'; // Submitted | Approved | Implemented
+}
+
+// ─── Learning Courses ────────────────────────────────────────────────────────
+
+entity LearningCourses : cuid, managed {
+  name          : String(150) not null;
+  description   : String(500);
+  relatedTool   : Association to AITools;
+  durationHours : Decimal(5,2);
+  assignments   : Composition of many CourseAssignments on assignments.course = $self;
+}
+
+// ─── Course Assignments ──────────────────────────────────────────────────────
+
+entity CourseAssignments : cuid, managed {
+  course           : Association to LearningCourses not null;
+  consultant       : Association to Consultants not null;
+  completionStatus : String(20) default 'Assigned'; // Assigned | InProgress | Completed | Skipped
+  completionDate   : Date;
+}

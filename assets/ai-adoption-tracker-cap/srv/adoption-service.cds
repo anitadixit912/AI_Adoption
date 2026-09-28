@@ -42,6 +42,26 @@ service AdoptionService {
     tool
   };
 
+  // ─── Ideas ────────────────────────────────────────────────────────────────
+  entity Ideas as projection on adoption.Ideas {
+    *,
+    submitter
+  };
+
+  // ─── Learning Courses ─────────────────────────────────────────────────────
+  entity LearningCourses as projection on adoption.LearningCourses {
+    *,
+    relatedTool,
+    assignments
+  };
+
+  // ─── Course Assignments ───────────────────────────────────────────────────
+  entity CourseAssignments as projection on adoption.CourseAssignments {
+    *,
+    course,
+    consultant
+  };
+
   // ─── Actions & Functions ──────────────────────────────────────────────────
 
   // Log a manual session (for EKX or any tool without auto-capture)
@@ -60,6 +80,17 @@ service AdoptionService {
 
   // Trigger adoption tier re-classification (admin)
   action runClassification() returns String;
+
+  // Bulk upload records for a given entity (admin)
+  // records is a JSON string — array of objects serialized client-side
+  action bulkUpload(
+    entityName : String,
+    records    : LargeString
+  ) returns {
+    success : Integer;
+    failed  : Integer;
+    errors  : array of { row : Integer; message : String };
+  };
 
   // Team heatmap: consultant × tool usage matrix
   function getTeamHeatmap(practiceLeadID : String) returns array of {

@@ -3,6 +3,7 @@ import CoEDashboard          from './pages/CoEDashboard.jsx'
 import PracticeLeadDashboard from './pages/PracticeLeadDashboard.jsx'
 import ConsultantDashboard   from './pages/ConsultantDashboard.jsx'
 import LogSession            from './pages/LogSession.jsx'
+import AdminPanel            from './pages/AdminPanel.jsx'
 import './App.css'
 
 // Role switcher for demo — represents "Test User" as the default current user
@@ -94,12 +95,15 @@ export default function App() {
       </header>
 
       {/* Main Content */}
-      <main className="main-content">
-        {activePage === 'coe'  && <CoEDashboard />}
-        {activePage === 'lead' && <PracticeLeadDashboard currentUser={currentUser} />}
-        {activePage === 'self' && <ConsultantDashboard currentUser={currentUser} />}
-        {activePage === 'log'  && <LogSession currentUser={currentUser} />}
-      </main>
+      <div className={role === 'Admin' ? 'app-body app-body--with-sidebar' : 'app-body'}>
+        {role === 'Admin' && <AdminPanel />}
+        <main className="main-content">
+          {activePage === 'coe'  && <CoEDashboard />}
+          {activePage === 'lead' && <PracticeLeadDashboard currentUser={currentUser} />}
+          {activePage === 'self' && <ConsultantDashboard currentUser={currentUser} />}
+          {activePage === 'log'  && <LogSession currentUser={currentUser} />}
+        </main>
+      </div>
     </div>
   )
 }

@@ -1,0 +1,6 @@
+ID,title,description,submitter_ID,status
+a1b2c3d4-0001-0001-0001-000000000001,Auto-generate SAP config documentation using J4C,Use Joule for Copilot to automatically draft functional spec documents from SAP configuration settings — saves 2-3 hours per config cycle.,dddddddd-dddd-dddd-dddd-dddddddddddd,Approved
+a1b2c3d4-0002-0002-0002-000000000002,EKX-powered onboarding knowledge base,Build a curated EKX prompt library for new consultant onboarding — covering ENR-specific SAP processes and common client questions.,329abc1e-e1cc-4903-b776-3424e565b440,Submitted
+a1b2c3d4-0003-0003-0003-000000000003,Joule Desktop for meeting summarisation,Standardise use of Joule Work Desktop across all practice leads to auto-summarise weekly team calls and distribute action items.,90321abe-697b-463b-8f4f-31ac3ff3df7b,Implemented
+a1b2c3d4-0004-0004-0004-000000000004,ABAP review checklist powered by J4D,Create a shared J4D prompt template for ABAP code review — reduces review time and improves consistency across developer teams.,a798a3ec-026a-44ee-b04f-453010aac2a6,Submitted
+a1b2c3d4-0005-0005-0005-000000000005,AI-assisted bid proposal drafting with J4C,Pilot J4C for drafting ENR bid proposals — initial tests show 40% reduction in first-draft time for standard RFP responses.,fb8f26f3-186a-424d-bd3f-cdc296727336,Approved

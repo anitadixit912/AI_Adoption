@@ -150,6 +150,47 @@ export default class AdoptionService extends cds.ApplicationService {
       return await runClassification()
     })
 
+    // ── bulkUpload ────────────────────────────────────────────────────────
+    this.on('bulkUpload', async req => {
+      const { entityName, records: recordsJson } = req.data
+
+      let records
+      try {
+        records = typeof recordsJson === 'string' ? JSON.parse(recordsJson) : recordsJson
+      } catch {
+        return req.reject(400, 'records must be a valid JSON string')
+      }
+
+      if (!Array.isArray(records) || records.length === 0)
+        return req.reject(400, 'records must be a non-empty array')
+
+      const ns = cds.entities('adoption')
+      const ENTITY_MAP = {
+        Users:             ns.Consultants,
+        Sessions:          ns.UsageSessions,
+        Ideas:             ns.Ideas,
+        LearningCourses:   ns.LearningCourses,
+        CourseAssignments: ns.CourseAssignments,
+      }
+      const Entity = ENTITY_MAP[entityName]
+      if (!Entity) return req.reject(400, `Unknown entity: ${entityName}`)
+
+      let success = 0, failed = 0
+      const errors = []
+      for (let i = 0; i < records.length; i++) {
+        try {
+          const record = { ID: cds.utils.uuid(), ...records[i] }
+          await INSERT.into(Entity).entries(record)
+          success++
+        } catch (e) {
+          failed++
+          errors.push({ row: i + 1, message: e.message })
+        }
+      }
+      LOG.info(`bulkUpload(${entityName}): ${success} inserted, ${failed} failed`)
+      return { success, failed, errors }
+    })
+
     // ── getTeamHeatmap ────────────────────────────────────────────────────
     this.on('getTeamHeatmap', async req => {
       const { practiceLeadID } = req.data
