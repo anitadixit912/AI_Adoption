@@ -7522,7 +7522,7 @@ var import_react = require_react();
 var import_client = require_client();
 //#endregion
 //#region src/hooks/useApi.js
-var BASE = "/AdoptionService";
+var BASE$1 = "/AdoptionService";
 async function checkResponse(r) {
 	if (!r.ok) {
 		let msg = `HTTP ${r.status}`;
@@ -7535,18 +7535,18 @@ async function checkResponse(r) {
 	return r;
 }
 async function apiGet(path) {
-	const d = await (await checkResponse(await fetch(`${BASE}${path}`))).json();
+	const d = await (await checkResponse(await fetch(`${BASE$1}${path}`))).json();
 	return d.value ?? d;
 }
 async function apiPost(path, body) {
-	return (await checkResponse(await fetch(`${BASE}${path}`, {
+	return (await checkResponse(await fetch(`${BASE$1}${path}`, {
 		method: "POST",
 		headers: { "Content-Type": "application/json" },
 		body: JSON.stringify(body)
 	}))).json();
 }
 async function apiPatch(path, body) {
-	const r = await checkResponse(await fetch(`${BASE}${path}`, {
+	const r = await checkResponse(await fetch(`${BASE$1}${path}`, {
 		method: "PATCH",
 		headers: { "Content-Type": "application/json" },
 		body: JSON.stringify(body)
@@ -10203,14 +10203,14 @@ function ConsultantDashboard({ currentUser }) {
 }
 //#endregion
 //#region src/pages/LogSession.jsx
-var TASK_TYPES = [
+var TASK_TYPES$1 = [
 	"DocumentDrafting",
 	"CodeReview",
 	"DataAnalysis",
 	"Research",
 	"Other"
 ];
-var DURATIONS = [
+var DURATIONS$1 = [
 	15,
 	30,
 	45,
@@ -10218,7 +10218,7 @@ var DURATIONS = [
 	90,
 	120
 ];
-var EFFICIENCY = {
+var EFFICIENCY$1 = {
 	JWD: .6,
 	JS: .65,
 	J4C: .7,
@@ -10246,7 +10246,7 @@ function LogSession() {
 			}
 		});
 	}, []);
-	const estimated = toolName ? (duration / 60 * (EFFICIENCY[toolName] ?? .6)).toFixed(2) : "—";
+	const estimated = toolName ? (duration / 60 * (EFFICIENCY$1[toolName] ?? .6)).toFixed(2) : "—";
 	async function handleSubmit(e) {
 		e.preventDefault();
 		setSubmitting(true);
@@ -10320,7 +10320,7 @@ function LogSession() {
 								value: taskType,
 								onChange: (e) => setTaskType(e.target.value),
 								required: true,
-								children: TASK_TYPES.map((t) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", {
+								children: TASK_TYPES$1.map((t) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", {
 									value: t,
 									children: t
 								}, t))
@@ -10342,7 +10342,7 @@ function LogSession() {
 								value: duration,
 								onChange: (e) => setDuration(Number(e.target.value)),
 								required: true,
-								children: DURATIONS.map((d) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("option", {
+								children: DURATIONS$1.map((d) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("option", {
 									value: d,
 									children: [d, " minutes"]
 								}, d))
@@ -36694,7 +36694,7 @@ var ENTITY_CONFIG = {
 		]
 	}
 };
-var TABS = [
+var TABS$1 = [
 	"Users",
 	"Sessions",
 	"Ideas",
@@ -37412,7 +37412,7 @@ function AdminPanel() {
 		children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
 			className: "admin-sidebar-header",
 			children: "Admin Panel"
-		}), TABS.map((tab) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
+		}), TABS$1.map((tab) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
 			className: `admin-tab-btn ${activeTab === tab ? "admin-tab-btn--active" : ""}`,
 			onClick: () => setActiveTab(tab),
 			children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: ENTITY_CONFIG[tab].icon }), ENTITY_CONFIG[tab].label]
@@ -37422,6 +37422,696 @@ function AdminPanel() {
 		consultants,
 		tools
 	}, activeTab)] });
+}
+//#endregion
+//#region src/pages/DataEntry.jsx
+var BASE = "/AdoptionService";
+var TASK_TYPES = [
+	{
+		value: "DocumentDrafting",
+		label: "Document Drafting"
+	},
+	{
+		value: "CodeReview",
+		label: "Code Review"
+	},
+	{
+		value: "DataAnalysis",
+		label: "Data Analysis"
+	},
+	{
+		value: "Research",
+		label: "Research"
+	},
+	{
+		value: "Other",
+		label: "Other"
+	}
+];
+var DURATIONS = [
+	{
+		value: 15,
+		label: "15 min"
+	},
+	{
+		value: 30,
+		label: "30 min"
+	},
+	{
+		value: 45,
+		label: "45 min"
+	},
+	{
+		value: 60,
+		label: "1 hour"
+	},
+	{
+		value: 90,
+		label: "1.5 hours"
+	},
+	{
+		value: 120,
+		label: "2 hours"
+	}
+];
+var CATEGORIES = [
+	"Coding",
+	"Research",
+	"Documentation",
+	"DataAnalysis",
+	"Other"
+];
+var CATEGORY_COLORS = {
+	Coding: {
+		bg: "#e8f0fe",
+		color: "#1a73e8"
+	},
+	Research: {
+		bg: "#e6f4ea",
+		color: "#188038"
+	},
+	Documentation: {
+		bg: "#fce8b2",
+		color: "#b06000"
+	},
+	DataAnalysis: {
+		bg: "#f3e8fd",
+		color: "#7c1fa0"
+	},
+	Other: {
+		bg: "#f1f3f4",
+		color: "#5f6368"
+	}
+};
+var EFFICIENCY = {
+	JWD: .6,
+	JS: .65,
+	J4C: .7,
+	J4D: .7,
+	EKX: .6
+};
+function today() {
+	return (/* @__PURE__ */ new Date()).toISOString().split("T")[0];
+}
+async function apiFetch(path, opts = {}) {
+	const res = await fetch(BASE + path, {
+		headers: { "Content-Type": "application/json" },
+		...opts
+	});
+	if (!res.ok) {
+		const text = await res.text().catch(() => "");
+		throw new Error(text || res.statusText);
+	}
+	return res.json();
+}
+function ProfileTab({ currentUser }) {
+	const [form, setForm] = (0, import_react.useState)({
+		name: "",
+		email: "",
+		jobTitle: "",
+		businessUnit: "",
+		department: "",
+		managerName: "",
+		joinDate: ""
+	});
+	const [saving, setSaving] = (0, import_react.useState)(false);
+	const [banner, setBanner] = (0, import_react.useState)(null);
+	const [loading, setLoading] = (0, import_react.useState)(true);
+	(0, import_react.useEffect)(() => {
+		apiFetch(`/Consultants('${currentUser.id}')`).then((data) => {
+			setForm({
+				name: data.name ?? "",
+				email: data.email ?? "",
+				jobTitle: data.jobTitle ?? "",
+				businessUnit: data.businessUnit ?? "",
+				department: data.department ?? "",
+				managerName: data.managerName ?? "",
+				joinDate: data.joinDate ?? ""
+			});
+		}).catch(() => setBanner({
+			type: "error",
+			text: "Could not load your profile."
+		})).finally(() => setLoading(false));
+	}, [currentUser.id]);
+	const handleSave = async () => {
+		setSaving(true);
+		setBanner(null);
+		try {
+			await apiFetch("/updateMyProfile", {
+				method: "POST",
+				body: JSON.stringify(form)
+			});
+			setBanner({
+				type: "success",
+				text: "Profile saved successfully."
+			});
+		} catch (e) {
+			setBanner({
+				type: "error",
+				text: `Save failed: ${e.message}`
+			});
+		} finally {
+			setSaving(false);
+		}
+	};
+	if (loading) return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+		className: "de-loading",
+		children: "Loading profile…"
+	});
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+		className: "de-section",
+		children: [
+			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+				className: "de-section-header",
+				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", {
+					className: "de-section-title",
+					children: "My Profile"
+				}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+					className: "de-section-sub",
+					children: "Keep your details up to date so your usage data is attributed correctly."
+				})]
+			}),
+			banner && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+				className: `de-banner de-banner--${banner.type}`,
+				children: banner.text
+			}),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+				className: "de-form-card",
+				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+					className: "de-form-grid",
+					children: [
+						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", {
+							className: "de-field",
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "Full Name" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", {
+								value: form.name,
+								onChange: (e) => setForm((f) => ({
+									...f,
+									name: e.target.value
+								})),
+								placeholder: "Your full name"
+							})]
+						}),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", {
+							className: "de-field",
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "Email" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", {
+								type: "email",
+								value: form.email,
+								onChange: (e) => setForm((f) => ({
+									...f,
+									email: e.target.value
+								})),
+								placeholder: "you@company.com"
+							})]
+						}),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", {
+							className: "de-field",
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "Job Title" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", {
+								value: form.jobTitle,
+								onChange: (e) => setForm((f) => ({
+									...f,
+									jobTitle: e.target.value
+								})),
+								placeholder: "e.g. Senior Consultant"
+							})]
+						}),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", {
+							className: "de-field",
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "Business Unit" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", {
+								value: form.businessUnit,
+								onChange: (e) => setForm((f) => ({
+									...f,
+									businessUnit: e.target.value
+								})),
+								placeholder: "e.g. ENR-North"
+							})]
+						}),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", {
+							className: "de-field",
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "Department / Practice" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", {
+								value: form.department,
+								onChange: (e) => setForm((f) => ({
+									...f,
+									department: e.target.value
+								})),
+								placeholder: "e.g. Engineering Practice"
+							})]
+						}),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", {
+							className: "de-field",
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "Manager Name" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", {
+								value: form.managerName,
+								onChange: (e) => setForm((f) => ({
+									...f,
+									managerName: e.target.value
+								})),
+								placeholder: "Your manager's name"
+							})]
+						}),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", {
+							className: "de-field",
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "Join Date" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", {
+								type: "date",
+								value: form.joinDate,
+								onChange: (e) => setForm((f) => ({
+									...f,
+									joinDate: e.target.value
+								}))
+							})]
+						})
+					]
+				}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+					className: "de-form-actions",
+					children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+						className: "de-btn de-btn--primary",
+						onClick: handleSave,
+						disabled: saving,
+						children: saving ? "Saving…" : "Save Profile"
+					})
+				})]
+			})
+		]
+	});
+}
+function LogUsageTab({ currentUser, onNavigate }) {
+	const [tools, setTools] = (0, import_react.useState)([]);
+	const [toolID, setToolID] = (0, import_react.useState)("");
+	const [toolName, setToolName] = (0, import_react.useState)("");
+	const [taskType, setTaskType] = (0, import_react.useState)("Other");
+	const [date, setDate] = (0, import_react.useState)(today());
+	const [duration, setDuration] = (0, import_react.useState)(30);
+	const [selfHours, setSelfHours] = (0, import_react.useState)("");
+	const [submitting, setSubmitting] = (0, import_react.useState)(false);
+	const [banner, setBanner] = (0, import_react.useState)(null);
+	const [lastSession, setLastSession] = (0, import_react.useState)(null);
+	(0, import_react.useEffect)(() => {
+		apiFetch("/AITools?$orderby=name").then((d) => {
+			setTools(d.value ?? []);
+			const ekx = (d.value ?? []).find((t) => t.name === "EKX");
+			if (ekx) {
+				setToolID(ekx.ID);
+				setToolName(ekx.name);
+			} else if ((d.value ?? []).length) {
+				setToolID(d.value[0].ID);
+				setToolName(d.value[0].name);
+			}
+		}).catch(() => {});
+	}, []);
+	const estimatedHours = toolName && EFFICIENCY[toolName] ? (duration / 60 * EFFICIENCY[toolName]).toFixed(2) : null;
+	const handleSubmit = async () => {
+		if (!toolID) {
+			setBanner({
+				type: "error",
+				text: "Please select a tool."
+			});
+			return;
+		}
+		setSubmitting(true);
+		setBanner(null);
+		try {
+			const body = {
+				toolID,
+				taskType,
+				sessionDate: date,
+				durationMinutes: Number(duration),
+				...selfHours ? { selfReportedHoursSaved: Number(selfHours) } : {}
+			};
+			await apiFetch("/logManualSession", {
+				method: "POST",
+				body: JSON.stringify(body)
+			});
+			setLastSession({
+				toolName,
+				duration,
+				date,
+				estimatedHours,
+				selfHours
+			});
+			setBanner({
+				type: "success",
+				text: "Session logged!"
+			});
+			setDuration(30);
+			setSelfHours("");
+			setDate(today());
+		} catch (e) {
+			setBanner({
+				type: "error",
+				text: `Failed to log session: ${e.message}`
+			});
+		} finally {
+			setSubmitting(false);
+		}
+	};
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+		className: "de-section",
+		children: [
+			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+				className: "de-section-header",
+				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", {
+					className: "de-section-title",
+					children: "Log AI Usage"
+				}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+					className: "de-section-sub",
+					children: "Record a session where you used an AI tool. This data powers your adoption dashboard."
+				})]
+			}),
+			banner && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+				className: `de-banner de-banner--${banner.type}`,
+				children: [banner.text, banner.type === "success" && onNavigate && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+					className: "de-banner-link",
+					onClick: () => onNavigate("self"),
+					children: "View my dashboard →"
+				})]
+			}),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+				className: "de-form-card",
+				children: [
+					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+						className: "de-form-grid",
+						children: [
+							/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", {
+								className: "de-field",
+								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "AI Tool" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("select", {
+									value: toolID,
+									onChange: (e) => {
+										const t = tools.find((x) => x.ID === e.target.value);
+										setToolID(e.target.value);
+										setToolName(t?.name ?? "");
+									},
+									children: tools.map((t) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", {
+										value: t.ID,
+										children: t.name
+									}, t.ID))
+								})]
+							}),
+							/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", {
+								className: "de-field",
+								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "Task Type" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("select", {
+									value: taskType,
+									onChange: (e) => setTaskType(e.target.value),
+									children: TASK_TYPES.map((t) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", {
+										value: t.value,
+										children: t.label
+									}, t.value))
+								})]
+							}),
+							/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", {
+								className: "de-field",
+								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "Date" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", {
+									type: "date",
+									value: date,
+									max: today(),
+									onChange: (e) => setDate(e.target.value)
+								})]
+							}),
+							/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", {
+								className: "de-field",
+								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "Duration" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("select", {
+									value: duration,
+									onChange: (e) => setDuration(Number(e.target.value)),
+									children: DURATIONS.map((d) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", {
+										value: d.value,
+										children: d.label
+									}, d.value))
+								})]
+							}),
+							/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", {
+								className: "de-field",
+								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "System Estimate" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+									className: "de-readonly-field",
+									children: estimatedHours ? `${estimatedHours} hrs saved` : "—"
+								})]
+							}),
+							/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", {
+								className: "de-field",
+								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "Your Estimate (optional)" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", {
+									type: "number",
+									min: "0",
+									step: "0.25",
+									value: selfHours,
+									onChange: (e) => setSelfHours(e.target.value),
+									placeholder: "e.g. 1.5"
+								})]
+							})
+						]
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+						className: "de-hint",
+						children: "Your estimate is collected alongside the system estimate — both are used for reporting."
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+						className: "de-form-actions",
+						children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+							className: "de-btn de-btn--primary",
+							onClick: handleSubmit,
+							disabled: submitting,
+							children: submitting ? "Logging…" : "Log Session"
+						})
+					})
+				]
+			})
+		]
+	});
+}
+function AIToolsTab({ role }) {
+	const [tools, setTools] = (0, import_react.useState)([]);
+	const [loading, setLoading] = (0, import_react.useState)(true);
+	const [showAdd, setShowAdd] = (0, import_react.useState)(false);
+	const [addForm, setAddForm] = (0, import_react.useState)({
+		name: "",
+		description: "",
+		category: "Other",
+		rolloutDate: "",
+		licensedUsersCount: ""
+	});
+	const [saving, setSaving] = (0, import_react.useState)(false);
+	const [banner, setBanner] = (0, import_react.useState)(null);
+	const loadTools = () => apiFetch("/AITools?$orderby=name").then((d) => setTools(d.value ?? [])).catch(() => {}).finally(() => setLoading(false));
+	(0, import_react.useEffect)(() => {
+		loadTools();
+	}, []);
+	const handleAddTool = async () => {
+		if (!addForm.name) {
+			setBanner({
+				type: "error",
+				text: "Tool name is required."
+			});
+			return;
+		}
+		setSaving(true);
+		setBanner(null);
+		try {
+			const body = {
+				name: addForm.name,
+				description: addForm.description,
+				category: addForm.category,
+				...addForm.rolloutDate ? { rolloutDate: addForm.rolloutDate } : {},
+				...addForm.licensedUsersCount ? { licensedUsersCount: Number(addForm.licensedUsersCount) } : {}
+			};
+			await apiFetch("/addAITool", {
+				method: "POST",
+				body: JSON.stringify(body)
+			});
+			setBanner({
+				type: "success",
+				text: `Tool "${addForm.name}" added.`
+			});
+			setAddForm({
+				name: "",
+				description: "",
+				category: "Other",
+				rolloutDate: "",
+				licensedUsersCount: ""
+			});
+			setShowAdd(false);
+			loadTools();
+		} catch (e) {
+			setBanner({
+				type: "error",
+				text: `Failed: ${e.message}`
+			});
+		} finally {
+			setSaving(false);
+		}
+	};
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+		className: "de-section",
+		children: [
+			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+				className: "de-section-header",
+				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", {
+					className: "de-section-title",
+					children: "AI Tools"
+				}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+					className: "de-section-sub",
+					children: "These are the AI tools available in the ENR practice. Use the tool name when logging sessions."
+				})]
+			}),
+			banner && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+				className: `de-banner de-banner--${banner.type}`,
+				children: banner.text
+			}),
+			loading ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+				className: "de-loading",
+				children: "Loading tools…"
+			}) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+				className: "tool-card-grid",
+				children: tools.map((t) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+					className: "tool-card",
+					children: [
+						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+							className: "tool-card-top",
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+								className: "tool-card-name",
+								children: t.name
+							}), t.category && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+								className: "tool-category-badge",
+								style: CATEGORY_COLORS[t.category] ?? CATEGORY_COLORS.Other,
+								children: t.category
+							})]
+						}),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+							className: "tool-card-desc",
+							children: t.description || /* @__PURE__ */ (0, import_jsx_runtime.jsx)("em", { children: "No description" })
+						}),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+							className: "tool-card-meta",
+							children: [t.rolloutDate && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { children: ["Rollout: ", t.rolloutDate] }), t.licensedUsersCount != null && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { children: [t.licensedUsersCount, " licensed users"] })]
+						})
+					]
+				}, t.ID))
+			}),
+			role === "Admin" && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+				className: "de-form-card de-admin-add-tool",
+				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+					className: "de-toggle-btn",
+					onClick: () => setShowAdd((v) => !v),
+					children: showAdd ? "▲ Hide" : "+ Add New Tool"
+				}), showAdd && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+					className: "de-form-grid",
+					style: { marginTop: 16 },
+					children: [
+						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", {
+							className: "de-field",
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { children: ["Tool Name ", /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+								className: "de-required",
+								children: "*"
+							})] }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", {
+								value: addForm.name,
+								onChange: (e) => setAddForm((f) => ({
+									...f,
+									name: e.target.value
+								})),
+								placeholder: "e.g. JWD"
+							})]
+						}),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", {
+							className: "de-field",
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "Description" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", {
+								value: addForm.description,
+								onChange: (e) => setAddForm((f) => ({
+									...f,
+									description: e.target.value
+								})),
+								placeholder: "Short description"
+							})]
+						}),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", {
+							className: "de-field",
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "Category" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("select", {
+								value: addForm.category,
+								onChange: (e) => setAddForm((f) => ({
+									...f,
+									category: e.target.value
+								})),
+								children: CATEGORIES.map((c) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", {
+									value: c,
+									children: c
+								}, c))
+							})]
+						}),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", {
+							className: "de-field",
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "Rollout Date" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", {
+								type: "date",
+								value: addForm.rolloutDate,
+								onChange: (e) => setAddForm((f) => ({
+									...f,
+									rolloutDate: e.target.value
+								}))
+							})]
+						}),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", {
+							className: "de-field",
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "Licensed Users" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", {
+								type: "number",
+								min: "0",
+								value: addForm.licensedUsersCount,
+								onChange: (e) => setAddForm((f) => ({
+									...f,
+									licensedUsersCount: e.target.value
+								})),
+								placeholder: "e.g. 200"
+							})]
+						})
+					]
+				}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+					className: "de-form-actions",
+					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+						className: "de-btn de-btn--primary",
+						onClick: handleAddTool,
+						disabled: saving,
+						children: saving ? "Adding…" : "Add Tool"
+					}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+						className: "de-btn de-btn--ghost",
+						onClick: () => setShowAdd(false),
+						children: "Cancel"
+					})]
+				})] })]
+			})
+		]
+	});
+}
+var TABS = [
+	{
+		key: "profile",
+		label: "My Profile"
+	},
+	{
+		key: "log",
+		label: "Log AI Usage"
+	},
+	{
+		key: "tools",
+		label: "AI Tools"
+	}
+];
+function DataEntry({ currentUser, role, onNavigate }) {
+	const [activeTab, setActiveTab] = (0, import_react.useState)("profile");
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+		className: "de-page",
+		children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+			className: "de-page-header",
+			children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+				className: "de-tabs",
+				children: TABS.map((t) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+					className: `de-tab-btn${activeTab === t.key ? " de-tab-btn--active" : ""}`,
+					onClick: () => setActiveTab(t.key),
+					children: t.label
+				}, t.key))
+			})
+		}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+			className: "de-page-body",
+			children: [
+				activeTab === "profile" && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ProfileTab, { currentUser }),
+				activeTab === "log" && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(LogUsageTab, {
+					currentUser,
+					onNavigate
+				}),
+				activeTab === "tools" && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(AIToolsTab, { role })
+			]
+		})]
+	});
 }
 //#endregion
 //#region src/App.jsx
@@ -37472,6 +38162,10 @@ function App() {
 		role === "Consultant" || role === "Admin" ? {
 			key: "log",
 			label: "Log Session"
+		} : null,
+		role !== "CoELeadership" ? {
+			key: "data",
+			label: "Data Entry"
 		} : null,
 		role === "Admin" ? {
 			key: "coe",
@@ -37556,7 +38250,12 @@ function App() {
 					activePage === "coe" && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(CoEDashboard, {}),
 					activePage === "lead" && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(PracticeLeadDashboard, { currentUser }),
 					activePage === "self" && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ConsultantDashboard, { currentUser }),
-					activePage === "log" && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(LogSession, { currentUser })
+					activePage === "log" && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(LogSession, { currentUser }),
+					activePage === "data" && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(DataEntry, {
+						currentUser,
+						role,
+						onNavigate: setActivePage
+					})
 				]
 			})]
 		})]

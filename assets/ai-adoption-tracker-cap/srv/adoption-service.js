@@ -108,7 +108,7 @@ export default class AdoptionService extends cds.ApplicationService {
 
     // ── logManualSession ───────────────────────────────────────────────────
     this.on('logManualSession', async req => {
-      const { toolID, taskType, sessionDate, durationMinutes } = req.data
+      const { toolID, taskType, sessionDate, durationMinutes, selfReportedHoursSaved } = req.data
       if (!toolID || !durationMinutes || durationMinutes <= 0)
         return req.reject(400, 'toolID and durationMinutes are required and durationMinutes must be > 0')
 
@@ -118,17 +118,59 @@ export default class AdoptionService extends cds.ApplicationService {
 
       const estimatedHoursSaved = calcEstimatedHours(durationMinutes, tool.name)
       const session = {
-        ID:                  cds.utils.uuid(),
-        consultant_ID:       req.user.id ?? 'dddddddd-dddd-dddd-dddd-dddddddddddd',
-        tool_ID:             toolID,
-        sessionDate:         sessionDate ?? new Date().toISOString().split('T')[0],
+        ID:                     cds.utils.uuid(),
+        consultant_ID:          req.user.id ?? 'dddddddd-dddd-dddd-dddd-dddddddddddd',
+        tool_ID:                toolID,
+        sessionDate:            sessionDate ?? new Date().toISOString().split('T')[0],
         durationMinutes,
         estimatedHoursSaved,
-        source:              'Manual',
-        taskType:            taskType ?? 'Other'
+        selfReportedHoursSaved: selfReportedHoursSaved ?? null,
+        source:                 'Manual',
+        taskType:               taskType ?? 'Other'
       }
       await INSERT.into(UsageSessions).entries(session)
       return session
+    })
+
+    // ── updateMyProfile ───────────────────────────────────────────────────
+    this.on('updateMyProfile', async req => {
+      const { name, email, jobTitle, businessUnit, department, managerName, joinDate } = req.data
+      const consultantID = req.user.id ?? 'dddddddd-dddd-dddd-dddd-dddddddddddd'
+      const { Consultants } = cds.entities('adoption')
+
+      const existing = await SELECT.one.from(Consultants).where({ ID: consultantID })
+      if (!existing) return req.reject(404, 'Consultant profile not found')
+
+      const updates = {}
+      if (name         != null) updates.name         = name
+      if (email        != null) updates.email        = email
+      if (jobTitle     != null) updates.jobTitle     = jobTitle
+      if (businessUnit != null) updates.businessUnit = businessUnit
+      if (department   != null) updates.department   = department
+      if (managerName  != null) updates.managerName  = managerName
+      if (joinDate     != null) updates.joinDate     = joinDate
+
+      await UPDATE(Consultants, consultantID).with(updates)
+      return await SELECT.one.from(Consultants).where({ ID: consultantID })
+    })
+
+    // ── addAITool ─────────────────────────────────────────────────────────
+    this.on('addAITool', async req => {
+      const { name, description, category, rolloutDate, licensedUsersCount } = req.data
+      if (!name) return req.reject(400, 'Tool name is required')
+
+      const { AITools } = cds.entities('adoption')
+      const tool = {
+        ID:                 cds.utils.uuid(),
+        name,
+        description:        description ?? '',
+        dataSource:         'Manual',
+        category:           category ?? 'Other',
+        rolloutDate:        rolloutDate ?? null,
+        licensedUsersCount: licensedUsersCount ?? null
+      }
+      await INSERT.into(AITools).entries(tool)
+      return tool
     })
 
     // ── adjustHoursSaved ──────────────────────────────────────────────────

@@ -66,11 +66,32 @@ service AdoptionService {
 
   // Log a manual session (for EKX or any tool without auto-capture)
   action logManualSession(
-    toolID        : UUID,
-    taskType      : String,
-    sessionDate   : Date,
-    durationMinutes : Integer
+    toolID                 : UUID,
+    taskType               : String,
+    sessionDate            : Date,
+    durationMinutes        : Integer,
+    selfReportedHoursSaved : Decimal
   ) returns UsageSessions;
+
+  // Update the current user's consultant profile
+  action updateMyProfile(
+    name         : String,
+    email        : String,
+    jobTitle     : String,
+    businessUnit : String,
+    department   : String,
+    managerName  : String,
+    joinDate     : Date
+  ) returns Consultants;
+
+  // Add a new AI tool (Admin)
+  action addAITool(
+    name               : String,
+    description        : String,
+    category           : String,
+    rolloutDate        : Date,
+    licensedUsersCount : Integer
+  ) returns AITools;
 
   // Consultant adjusts system-estimated hours saved
   action adjustHoursSaved(

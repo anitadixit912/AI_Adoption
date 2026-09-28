@@ -5,9 +5,12 @@ using { cuid, managed } from '@sap/cds/common';
 // ─── AI Tools ───────────────────────────────────────────────────────────────
 
 entity AITools : cuid {
-  name        : String(50) not null;
-  description : String(200);
-  dataSource  : String(20) not null; // BTPAuditLog | AICore | Manual
+  name               : String(50) not null;
+  description        : String(200);
+  dataSource         : String(20) not null; // BTPAuditLog | AICore | Manual
+  category           : String(50);          // Coding | Research | Documentation | DataAnalysis | Other
+  rolloutDate        : Date;
+  licensedUsersCount : Integer;
 }
 
 // ─── Consultants ────────────────────────────────────────────────────────────
@@ -18,6 +21,9 @@ entity Consultants : cuid, managed {
   role             : String(30) not null default 'Consultant'; // Consultant | PracticeLead | CoELeadership | Admin
   businessUnit     : String(100) not null;
   department       : String(100);
+  jobTitle         : String(100);
+  managerName      : String(100);
+  joinDate         : Date;
   adoptionTier     : String(20) default 'NonAdopter'; // ActiveAdopter | OccasionalUser | LapsedUser | NonAdopter
   lastActivityDate : Date;
   sessions         : Composition of many UsageSessions on sessions.consultant = $self;
@@ -28,14 +34,15 @@ entity Consultants : cuid, managed {
 // ─── Usage Sessions ─────────────────────────────────────────────────────────
 
 entity UsageSessions : cuid, managed {
-  consultant             : Association to Consultants not null;
-  tool                   : Association to AITools not null;
-  sessionDate            : Date not null;
-  durationMinutes        : Integer not null;
-  estimatedHoursSaved    : Decimal(5,2);
-  consultantAdjustedHours: Decimal(5,2);
-  source                 : String(10) not null default 'Manual'; // Automatic | Manual
-  taskType               : String(50); // DocumentDrafting | CodeReview | DataAnalysis | Research | Other
+  consultant              : Association to Consultants not null;
+  tool                    : Association to AITools not null;
+  sessionDate             : Date not null;
+  durationMinutes         : Integer not null;
+  estimatedHoursSaved     : Decimal(5,2);
+  consultantAdjustedHours : Decimal(5,2);
+  selfReportedHoursSaved  : Decimal(5,2);
+  source                  : String(10) not null default 'Manual'; // Automatic | Manual
+  taskType                : String(50); // DocumentDrafting | CodeReview | DataAnalysis | Research | Other
 }
 
 // ─── Notifications ──────────────────────────────────────────────────────────

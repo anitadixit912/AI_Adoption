@@ -4,6 +4,7 @@ import PracticeLeadDashboard from './pages/PracticeLeadDashboard.jsx'
 import ConsultantDashboard   from './pages/ConsultantDashboard.jsx'
 import LogSession            from './pages/LogSession.jsx'
 import AdminPanel            from './pages/AdminPanel.jsx'
+import DataEntry             from './pages/DataEntry.jsx'
 import './App.css'
 
 // Role switcher for demo — represents "Test User" as the default current user
@@ -33,6 +34,9 @@ export default function App() {
       : null,
     role === 'Consultant' || role === 'Admin'
       ? { key: 'log',      label: 'Log Session'    }
+      : null,
+    role !== 'CoELeadership'
+      ? { key: 'data',     label: 'Data Entry'     }
       : null,
     // Admin sees everything
     role === 'Admin'
@@ -102,6 +106,7 @@ export default function App() {
           {activePage === 'lead' && <PracticeLeadDashboard currentUser={currentUser} />}
           {activePage === 'self' && <ConsultantDashboard currentUser={currentUser} />}
           {activePage === 'log'  && <LogSession currentUser={currentUser} />}
+          {activePage === 'data' && <DataEntry currentUser={currentUser} role={role} onNavigate={setActivePage} />}
         </main>
       </div>
     </div>
