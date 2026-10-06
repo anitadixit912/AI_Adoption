@@ -10242,7 +10242,7 @@ var EFFICIENCY$1 = {
 	J4D: .7,
 	EKX: .6
 };
-function LogSession({ currentUser, onSessionLogged }) {
+function LogSession({ currentUser, onSessionLogged, onNavigate }) {
 	const [tools, setTools] = (0, import_react.useState)([]);
 	const [toolID, setToolID] = (0, import_react.useState)("");
 	const [toolName, setToolName] = (0, import_react.useState)("");
@@ -10407,11 +10407,19 @@ function LogSession({ currentUser, onSessionLogged }) {
 								})
 							]
 						}),
-						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
-							type: "submit",
-							className: "submit-btn",
-							disabled: submitting,
-							children: submitting ? "Logging..." : "Log Session"
+						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+							className: "form-actions-row",
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+								type: "submit",
+								className: "submit-btn",
+								disabled: submitting,
+								children: submitting ? "Logging..." : "Log Session"
+							}), onNavigate && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+								type: "button",
+								className: "submit-btn submit-btn--secondary",
+								onClick: () => onNavigate("data"),
+								children: "Data Entry →"
+							})]
 						})
 					]
 				})
@@ -38292,7 +38300,8 @@ function App() {
 					}),
 					activePage === "log" && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(LogSession, {
 						currentUser,
-						onSessionLogged
+						onSessionLogged,
+						onNavigate: setActivePage
 					}),
 					activePage === "data" && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(DataEntry, {
 						currentUser,

@@ -6,7 +6,7 @@ const DURATIONS  = [15, 30, 45, 60, 90, 120]
 
 const EFFICIENCY = { JWD: 0.60, JS: 0.65, J4C: 0.70, J4D: 0.70, EKX: 0.60 }
 
-export default function LogSession({ currentUser, onSessionLogged }) {
+export default function LogSession({ currentUser, onSessionLogged, onNavigate }) {
   const [tools, setTools]         = useState([])
   const [toolID, setToolID]       = useState('')
   const [toolName, setToolName]   = useState('')
@@ -131,9 +131,20 @@ export default function LogSession({ currentUser, onSessionLogged }) {
             <span className="estimated-hint">Override if the estimate doesn't match your experience</span>
           </div>
 
-          <button type="submit" className="submit-btn" disabled={submitting}>
-            {submitting ? 'Logging...' : 'Log Session'}
-          </button>
+          <div className="form-actions-row">
+            <button type="submit" className="submit-btn" disabled={submitting}>
+              {submitting ? 'Logging...' : 'Log Session'}
+            </button>
+            {onNavigate && (
+              <button
+                type="button"
+                className="submit-btn submit-btn--secondary"
+                onClick={() => onNavigate('data')}
+              >
+                Data Entry →
+              </button>
+            )}
+          </div>
         </form>
       </div>
     </div>

@@ -235,6 +235,9 @@ body {
   margin-top: 4px;
 }
 .submit-btn:disabled { opacity: 0.6; }
+.submit-btn--secondary { background: #fff; color: #0057b8; border: 1.5px solid #0057b8; margin-left: 10px; }
+.submit-btn--secondary:hover { background: #e8f0fe; }
+.form-actions-row { display: flex; align-items: center; margin-top: 4px; }
 .success-banner { background: #e6f5ec; border: 1px solid #107e3e; color: #107e3e; padding: 10px 16px; border-radius: 6px; margin-bottom: 16px; font-weight: 600; }
 .error-banner   { background: #fdecea; border: 1px solid #cc1919; color: #cc1919; padding: 10px 16px; border-radius: 6px; margin-bottom: 16px; }
 
