@@ -39,7 +39,8 @@ export default function LogSession() {
         toolID,
         taskType,
         sessionDate,
-        durationMinutes: duration
+        durationMinutes: duration,
+        ...(adjusted ? { selfReportedHoursSaved: Number(adjusted) } : {}),
       })
       setSuccess(true)
       setTimeout(() => setSuccess(false), 4000)

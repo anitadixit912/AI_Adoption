@@ -269,8 +269,12 @@ export default class AdoptionService extends cds.ApplicationService {
     if (process.env.NODE_ENV === 'test' || cds.env.profiles?.includes?.('test')) return await super.init()
 
     cds.on('served', () => {
-      // Normalise seed data dates relative to today, then classify
-      normaliseSeedDates()
+      // Normalise seed data dates relative to today, then classify.
+      // Wrap in cds.tx so all UPDATEs share a proper transaction context —
+      // without it, the bare UPDATE calls on 'served' can leave SQLite in a
+      // half-open state that causes "cannot rollback - no transaction is active"
+      // errors on the very next user request.
+      cds.tx(async () => normaliseSeedDates())
         .then(() => runClassification())
         .catch(e => LOG.error('Startup normalisation/classification failed', e))
       scheduleDaily(1, 0, 'Daily ingestion', async () => {
