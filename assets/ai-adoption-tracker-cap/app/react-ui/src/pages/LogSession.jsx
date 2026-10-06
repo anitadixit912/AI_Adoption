@@ -6,7 +6,7 @@ const DURATIONS  = [15, 30, 45, 60, 90, 120]
 
 const EFFICIENCY = { JWD: 0.60, JS: 0.65, J4C: 0.70, J4D: 0.70, EKX: 0.60 }
 
-export default function LogSession() {
+export default function LogSession({ currentUser, onSessionLogged }) {
   const [tools, setTools]         = useState([])
   const [toolID, setToolID]       = useState('')
   const [toolName, setToolName]   = useState('')
@@ -44,6 +44,13 @@ export default function LogSession() {
       })
       setSuccess(true)
       setTimeout(() => setSuccess(false), 4000)
+      setTaskType('Other')
+      setDate(new Date().toISOString().split('T')[0])
+      setDuration(30)
+      setAdjusted('')
+      // Trigger classification so adoption tier updates, then refresh the dashboard
+      apiPost('/runClassification', {}).catch(() => {})
+      onSessionLogged?.()
     } catch (err) {
       setError(err.message)
     } finally {

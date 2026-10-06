@@ -37,13 +37,14 @@ export default function PracticeLeadDashboard({ currentUser }) {
   const [loading, setLoading]               = useState(true)
   const [notes, setNotes]                   = useState({})
   const [saving, setSaving]                 = useState({})
+  const [saveError, setSaveError]           = useState({})
   const [buFilter, setBuFilter]             = useState('')
   const [allBUs, setAllBUs]                 = useState([])
   const [modal, setModal]                   = useState(null)
   const [tierPanelOpen, setTierPanelOpen]   = useState(false)
   const [trendPeriod, setTrendPeriod]       = useState('weekly')
 
-  const leadID = currentUser?.ID ?? 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb'
+  const leadID = currentUser?.id ?? 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb'
 
   useEffect(() => {
     Promise.all([
@@ -110,6 +111,7 @@ export default function PracticeLeadDashboard({ currentUser }) {
 
   async function saveNote(consultantID) {
     setSaving(s => ({ ...s, [consultantID]: true }))
+    setSaveError(e => ({ ...e, [consultantID]: null }))
     try {
       const note = notes[consultantID] ?? {}
       await apiPost('/PracticeLeadNotes', {
@@ -119,6 +121,8 @@ export default function PracticeLeadDashboard({ currentUser }) {
         notes:            note.notes ?? '',
         engagementStatus: note.engagementStatus ?? 'Active'
       })
+    } catch (e) {
+      setSaveError(s => ({ ...s, [consultantID]: e.message ?? 'Save failed' }))
     } finally {
       setSaving(s => ({ ...s, [consultantID]: false }))
     }
@@ -446,6 +450,7 @@ export default function PracticeLeadDashboard({ currentUser }) {
                     <button className="save-btn" onClick={() => saveNote(c.consultantID)} disabled={saving[c.consultantID]}>
                       {saving[c.consultantID] ? 'Saving...' : 'Save'}
                     </button>
+                    {saveError[c.consultantID] && <div style={{color:'#cc1919',fontSize:'0.75rem',marginTop:4}}>{saveError[c.consultantID]}</div>}
                   </td>
                 </tr>
               ))}

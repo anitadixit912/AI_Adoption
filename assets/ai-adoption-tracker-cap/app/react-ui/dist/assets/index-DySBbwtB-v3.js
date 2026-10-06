@@ -8370,12 +8370,13 @@ function PracticeLeadDashboard({ currentUser }) {
 	const [loading, setLoading] = (0, import_react.useState)(true);
 	const [notes, setNotes] = (0, import_react.useState)({});
 	const [saving, setSaving] = (0, import_react.useState)({});
+	const [saveError, setSaveError] = (0, import_react.useState)({});
 	const [buFilter, setBuFilter] = (0, import_react.useState)("");
 	const [allBUs, setAllBUs] = (0, import_react.useState)([]);
 	const [modal, setModal] = (0, import_react.useState)(null);
 	const [tierPanelOpen, setTierPanelOpen] = (0, import_react.useState)(false);
 	const [trendPeriod, setTrendPeriod] = (0, import_react.useState)("weekly");
-	const leadID = currentUser?.ID ?? "bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb";
+	const leadID = currentUser?.id ?? "bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb";
 	(0, import_react.useEffect)(() => {
 		Promise.all([
 			apiGet(`/getTeamHeatmap(practiceLeadID='${leadID}')`),
@@ -8484,6 +8485,10 @@ function PracticeLeadDashboard({ currentUser }) {
 			...s,
 			[consultantID]: true
 		}));
+		setSaveError((e) => ({
+			...e,
+			[consultantID]: null
+		}));
 		try {
 			const note = notes[consultantID] ?? {};
 			await apiPost("/PracticeLeadNotes", {
@@ -8493,6 +8498,11 @@ function PracticeLeadDashboard({ currentUser }) {
 				notes: note.notes ?? "",
 				engagementStatus: note.engagementStatus ?? "Active"
 			});
+		} catch (e) {
+			setSaveError((s) => ({
+				...s,
+				[consultantID]: e.message ?? "Save failed"
+			}));
 		} finally {
 			setSaving((s) => ({
 				...s,
@@ -9287,12 +9297,19 @@ function PracticeLeadDashboard({ currentUser }) {
 											})
 										]
 									}) }),
-									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("td", { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+									/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("td", { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
 										className: "save-btn",
 										onClick: () => saveNote(c.consultantID),
 										disabled: saving[c.consultantID],
 										children: saving[c.consultantID] ? "Saving..." : "Save"
-									}) })
+									}), saveError[c.consultantID] && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+										style: {
+											color: "#cc1919",
+											fontSize: "0.75rem",
+											marginTop: 4
+										},
+										children: saveError[c.consultantID]
+									})] })
 								]
 							}, c.consultantID)) })]
 						})
@@ -9514,7 +9531,7 @@ var TOOL_LINKS = {
 	J4D: "https://www.sap.com/products/artificial-intelligence/ai-assistant.html",
 	EKX: "https://www.sap.com/products/artificial-intelligence.html"
 };
-function ConsultantDashboard({ currentUser }) {
+function ConsultantDashboard({ currentUser, refreshKey = 0 }) {
 	const consultantID = currentUser?.id ?? "238251a7-2498-4d41-ba9e-1061c91cc8fd";
 	const [consultant, setConsultant] = (0, import_react.useState)(null);
 	const [sessions, setSessions] = (0, import_react.useState)([]);
@@ -9543,7 +9560,7 @@ function ConsultantDashboard({ currentUser }) {
 			setError(e.message);
 			setLoading(false);
 		});
-	}, [consultantID]);
+	}, [consultantID, refreshKey]);
 	async function markRead(notifID) {
 		await apiPatch(`/Notifications('${notifID}')`, { isRead: true });
 		setNotifications((prev) => prev.map((n) => n.ID === notifID ? {
@@ -10225,7 +10242,7 @@ var EFFICIENCY$1 = {
 	J4D: .7,
 	EKX: .6
 };
-function LogSession() {
+function LogSession({ currentUser, onSessionLogged }) {
 	const [tools, setTools] = (0, import_react.useState)([]);
 	const [toolID, setToolID] = (0, import_react.useState)("");
 	const [toolName, setToolName] = (0, import_react.useState)("");
@@ -10261,6 +10278,12 @@ function LogSession() {
 			});
 			setSuccess(true);
 			setTimeout(() => setSuccess(false), 4e3);
+			setTaskType("Other");
+			setDate((/* @__PURE__ */ new Date()).toISOString().split("T")[0]);
+			setDuration(30);
+			setAdjusted("");
+			apiPost("/runClassification", {}).catch(() => {});
+			onSessionLogged?.();
 		} catch (err) {
 			setError(err.message);
 		} finally {
@@ -37693,7 +37716,7 @@ function ProfileTab({ currentUser }) {
 		]
 	});
 }
-function LogUsageTab({ currentUser, onNavigate }) {
+function LogUsageTab({ currentUser, onNavigate, onSessionLogged }) {
 	const [tools, setTools] = (0, import_react.useState)([]);
 	const [toolID, setToolID] = (0, import_react.useState)("");
 	const [toolName, setToolName] = (0, import_react.useState)("");
@@ -37715,7 +37738,10 @@ function LogUsageTab({ currentUser, onNavigate }) {
 				setToolID(d.value[0].ID);
 				setToolName(d.value[0].name);
 			}
-		}).catch(() => {});
+		}).catch(() => setBanner({
+			type: "error",
+			text: "Could not load tools. Please refresh the page."
+		}));
 	}, []);
 	const estimatedHours = toolName && EFFICIENCY[toolName] ? (duration / 60 * EFFICIENCY[toolName]).toFixed(2) : null;
 	const handleSubmit = async () => {
@@ -37754,6 +37780,11 @@ function LogUsageTab({ currentUser, onNavigate }) {
 			setDuration(30);
 			setSelfHours("");
 			setDate(today());
+			apiFetch("/runClassification", {
+				method: "POST",
+				body: "{}"
+			}).catch(() => {});
+			onSessionLogged?.();
 		} catch (e) {
 			setBanner({
 				type: "error",
@@ -38087,7 +38118,7 @@ var TABS = [
 		label: "AI Tools"
 	}
 ];
-function DataEntry({ currentUser, role, onNavigate }) {
+function DataEntry({ currentUser, role, onNavigate, onSessionLogged }) {
 	const [activeTab, setActiveTab] = (0, import_react.useState)("profile");
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 		className: "de-page",
@@ -38107,7 +38138,8 @@ function DataEntry({ currentUser, role, onNavigate }) {
 				activeTab === "profile" && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ProfileTab, { currentUser }),
 				activeTab === "log" && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(LogUsageTab, {
 					currentUser,
-					onNavigate
+					onNavigate,
+					onSessionLogged
 				}),
 				activeTab === "tools" && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(AIToolsTab, { role })
 			]
@@ -38146,6 +38178,10 @@ var DEMO_USERS = [
 function App() {
 	const [currentUser, setCurrentUser] = (0, import_react.useState)(DEMO_USERS[0]);
 	const [activePage, setActivePage] = (0, import_react.useState)("self");
+	const [dashboardKey, setDashboardKey] = (0, import_react.useState)(0);
+	function onSessionLogged() {
+		setDashboardKey((k) => k + 1);
+	}
 	const role = currentUser.role;
 	const navItems = [
 		role === "CoELeadership" || role === "Admin" ? {
@@ -38250,12 +38286,19 @@ function App() {
 				children: [
 					activePage === "coe" && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(CoEDashboard, {}),
 					activePage === "lead" && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(PracticeLeadDashboard, { currentUser }),
-					activePage === "self" && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ConsultantDashboard, { currentUser }),
-					activePage === "log" && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(LogSession, { currentUser }),
+					activePage === "self" && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ConsultantDashboard, {
+						currentUser,
+						refreshKey: dashboardKey
+					}),
+					activePage === "log" && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(LogSession, {
+						currentUser,
+						onSessionLogged
+					}),
 					activePage === "data" && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(DataEntry, {
 						currentUser,
 						role,
-						onNavigate: setActivePage
+						onNavigate: setActivePage,
+						onSessionLogged
 					})
 				]
 			})]

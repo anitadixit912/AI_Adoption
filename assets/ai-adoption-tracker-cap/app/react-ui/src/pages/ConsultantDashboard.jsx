@@ -28,7 +28,7 @@ const TOOL_LINKS = {
   EKX: 'https://www.sap.com/products/artificial-intelligence.html'
 }
 
-export default function ConsultantDashboard({ currentUser }) {
+export default function ConsultantDashboard({ currentUser, refreshKey = 0 }) {
   const consultantID = currentUser?.id ?? MY_CONSULTANT_ID
   const [consultant, setConsultant]       = useState(null)
   const [sessions, setSessions]           = useState([])
@@ -58,7 +58,7 @@ export default function ConsultantDashboard({ currentUser }) {
       setError(e.message)
       setLoading(false)
     })
-  }, [consultantID])
+  }, [consultantID, refreshKey])
 
   async function markRead(notifID) {
     await apiPatch(`/Notifications('${notifID}')`, { isRead: true })

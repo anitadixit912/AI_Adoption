@@ -19,6 +19,11 @@ const DEMO_USERS = [
 export default function App() {
   const [currentUser, setCurrentUser] = useState(DEMO_USERS[0])
   const [activePage,  setActivePage]  = useState('self')
+  const [dashboardKey, setDashboardKey] = useState(0)
+
+  function onSessionLogged() {
+    setDashboardKey(k => k + 1)
+  }
 
   const role = currentUser.role
 
@@ -104,9 +109,9 @@ export default function App() {
         <main className="main-content">
           {activePage === 'coe'  && <CoEDashboard />}
           {activePage === 'lead' && <PracticeLeadDashboard currentUser={currentUser} />}
-          {activePage === 'self' && <ConsultantDashboard currentUser={currentUser} />}
-          {activePage === 'log'  && <LogSession currentUser={currentUser} />}
-          {activePage === 'data' && <DataEntry currentUser={currentUser} role={role} onNavigate={setActivePage} />}
+          {activePage === 'self' && <ConsultantDashboard currentUser={currentUser} refreshKey={dashboardKey} />}
+          {activePage === 'log'  && <LogSession currentUser={currentUser} onSessionLogged={onSessionLogged} />}
+          {activePage === 'data' && <DataEntry currentUser={currentUser} role={role} onNavigate={setActivePage} onSessionLogged={onSessionLogged} />}
         </main>
       </div>
     </div>

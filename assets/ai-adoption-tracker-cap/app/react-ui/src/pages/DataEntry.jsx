@@ -143,7 +143,7 @@ function ProfileTab({ currentUser }) {
 }
 
 // ── Log AI Usage Tab ──────────────────────────────────────────────────────────
-function LogUsageTab({ currentUser, onNavigate }) {
+function LogUsageTab({ currentUser, onNavigate, onSessionLogged }) {
   const [tools, setTools]       = useState([])
   const [toolID, setToolID]     = useState('')
   const [toolName, setToolName] = useState('')
@@ -163,7 +163,7 @@ function LogUsageTab({ currentUser, onNavigate }) {
         if (ekx) { setToolID(ekx.ID); setToolName(ekx.name) }
         else if ((d.value ?? []).length) { setToolID(d.value[0].ID); setToolName(d.value[0].name) }
       })
-      .catch(() => {})
+      .catch(() => setBanner({ type: 'error', text: 'Could not load tools. Please refresh the page.' }))
   }, [])
 
   const estimatedHours = toolName && EFFICIENCY[toolName]
@@ -188,6 +188,9 @@ function LogUsageTab({ currentUser, onNavigate }) {
       setDuration(30)
       setSelfHours('')
       setDate(today())
+      // Trigger classification so adoption tier updates, then refresh the dashboard
+      apiFetch('/runClassification', { method: 'POST', body: '{}' }).catch(() => {})
+      onSessionLogged?.()
     } catch (e) {
       setBanner({ type: 'error', text: `Failed to log session: ${e.message}` })
     } finally {
@@ -397,7 +400,7 @@ const TABS = [
   { key: 'tools',   label: 'AI Tools'      },
 ]
 
-export default function DataEntry({ currentUser, role, onNavigate }) {
+export default function DataEntry({ currentUser, role, onNavigate, onSessionLogged }) {
   const [activeTab, setActiveTab] = useState('profile')
 
   return (
@@ -418,7 +421,7 @@ export default function DataEntry({ currentUser, role, onNavigate }) {
 
       <div className="de-page-body">
         {activeTab === 'profile' && <ProfileTab currentUser={currentUser} />}
-        {activeTab === 'log'     && <LogUsageTab currentUser={currentUser} onNavigate={onNavigate} />}
+        {activeTab === 'log'     && <LogUsageTab currentUser={currentUser} onNavigate={onNavigate} onSessionLogged={onSessionLogged} />}
         {activeTab === 'tools'   && <AIToolsTab role={role} />}
       </div>
     </div>
