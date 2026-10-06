@@ -109,7 +109,7 @@ export default function App() {
         <main className="main-content">
           {activePage === 'coe'  && <CoEDashboard />}
           {activePage === 'lead' && <PracticeLeadDashboard currentUser={currentUser} />}
-          {activePage === 'self' && <ConsultantDashboard currentUser={currentUser} refreshKey={dashboardKey} />}
+          {activePage === 'self' && <ConsultantDashboard currentUser={currentUser} refreshKey={dashboardKey} onNavigate={setActivePage} />}
           {activePage === 'log'  && <LogSession currentUser={currentUser} onSessionLogged={onSessionLogged} onNavigate={setActivePage} />}
           {activePage === 'data' && <DataEntry currentUser={currentUser} role={role} onNavigate={setActivePage} onSessionLogged={onSessionLogged} />}
         </main>

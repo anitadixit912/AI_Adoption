@@ -9531,7 +9531,7 @@ var TOOL_LINKS = {
 	J4D: "https://www.sap.com/products/artificial-intelligence/ai-assistant.html",
 	EKX: "https://www.sap.com/products/artificial-intelligence.html"
 };
-function ConsultantDashboard({ currentUser, refreshKey = 0 }) {
+function ConsultantDashboard({ currentUser, refreshKey = 0, onNavigate }) {
 	const consultantID = currentUser?.id ?? "238251a7-2498-4d41-ba9e-1061c91cc8fd";
 	const [consultant, setConsultant] = (0, import_react.useState)(null);
 	const [sessions, setSessions] = (0, import_react.useState)([]);
@@ -10009,14 +10009,31 @@ function ConsultantDashboard({ currentUser, refreshKey = 0 }) {
 											] }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: s.sessionDate })]
 										}, s.ID))
 									})] }),
-									!usage && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+									!usage && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
 										style: {
 											color: "#e9730c",
 											fontSize: "0.85rem",
 											marginTop: 12
 										},
 										children: "You haven't tried this tool yet — log a session to get started!"
-									})
+									}), onNavigate && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+										onClick: () => {
+											setModal(null);
+											onNavigate("log");
+										},
+										style: {
+											marginTop: 10,
+											padding: "8px 18px",
+											background: "#0057b8",
+											color: "#fff",
+											border: "none",
+											borderRadius: 6,
+											fontWeight: 600,
+											fontSize: "0.9rem",
+											cursor: "pointer"
+										},
+										children: "Log a Session →"
+									})] })
 								] })
 							}),
 							children: [
@@ -38296,7 +38313,8 @@ function App() {
 					activePage === "lead" && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(PracticeLeadDashboard, { currentUser }),
 					activePage === "self" && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ConsultantDashboard, {
 						currentUser,
-						refreshKey: dashboardKey
+						refreshKey: dashboardKey,
+						onNavigate: setActivePage
 					}),
 					activePage === "log" && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(LogSession, {
 						currentUser,

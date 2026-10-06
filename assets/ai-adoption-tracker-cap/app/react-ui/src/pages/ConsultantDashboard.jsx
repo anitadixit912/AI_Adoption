@@ -28,7 +28,7 @@ const TOOL_LINKS = {
   EKX: 'https://www.sap.com/products/artificial-intelligence.html'
 }
 
-export default function ConsultantDashboard({ currentUser, refreshKey = 0 }) {
+export default function ConsultantDashboard({ currentUser, refreshKey = 0, onNavigate }) {
   const consultantID = currentUser?.id ?? MY_CONSULTANT_ID
   const [consultant, setConsultant]       = useState(null)
   const [sessions, setSessions]           = useState([])
@@ -221,7 +221,19 @@ export default function ConsultantDashboard({ currentUser, refreshKey = 0 }) {
                               </div>
                             </>
                           )}
-                          {!usage && <p style={{color:'#e9730c',fontSize:'0.85rem',marginTop:12}}>You haven't tried this tool yet — log a session to get started!</p>}
+                          {!usage && (
+                            <>
+                              <p style={{color:'#e9730c',fontSize:'0.85rem',marginTop:12}}>You haven't tried this tool yet — log a session to get started!</p>
+                              {onNavigate && (
+                                <button
+                                  onClick={() => { setModal(null); onNavigate('log') }}
+                                  style={{marginTop:10,padding:'8px 18px',background:'#0057b8',color:'#fff',border:'none',borderRadius:6,fontWeight:600,fontSize:'0.9rem',cursor:'pointer'}}
+                                >
+                                  Log a Session →
+                                </button>
+                              )}
+                            </>
+                          )}
                         </>
                       )
                     })}>
