@@ -10380,11 +10380,11 @@ function LogSession({ currentUser, onSessionLogged, onNavigate }) {
 						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 							className: "form-field",
 							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("label", { children: "Session Duration *" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("select", {
-								value: duration,
+								value: String(duration),
 								onChange: (e) => setDuration(Number(e.target.value)),
 								required: true,
 								children: DURATIONS$1.map((d) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("option", {
-									value: d,
+									value: String(d),
 									children: [d, " minutes"]
 								}, d))
 							})]
@@ -37802,7 +37802,6 @@ function LogUsageTab({ currentUser, onNavigate, onSessionLogged }) {
 				type: "success",
 				text: "Session logged!"
 			});
-			setDuration(30);
 			setSelfHours("");
 			setDate(today());
 			apiFetch("/runClassification", {
@@ -37884,10 +37883,10 @@ function LogUsageTab({ currentUser, onNavigate, onSessionLogged }) {
 							/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", {
 								className: "de-field",
 								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "Duration" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("select", {
-									value: duration,
+									value: String(duration),
 									onChange: (e) => setDuration(Number(e.target.value)),
 									children: DURATIONS.map((d) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", {
-										value: d.value,
+										value: String(d.value),
 										children: d.label
 									}, d.value))
 								})]

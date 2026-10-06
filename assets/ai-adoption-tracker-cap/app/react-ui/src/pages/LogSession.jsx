@@ -107,8 +107,8 @@ export default function LogSession({ currentUser, onSessionLogged, onNavigate })
 
           <div className="form-field">
             <label>Session Duration *</label>
-            <select value={duration} onChange={e => setDuration(Number(e.target.value))} required>
-              {DURATIONS.map(d => <option key={d} value={d}>{d} minutes</option>)}
+            <select value={String(duration)} onChange={e => setDuration(Number(e.target.value))} required>
+              {DURATIONS.map(d => <option key={d} value={String(d)}>{d} minutes</option>)}
             </select>
           </div>
 

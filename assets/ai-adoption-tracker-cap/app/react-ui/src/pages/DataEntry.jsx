@@ -185,7 +185,6 @@ function LogUsageTab({ currentUser, onNavigate, onSessionLogged }) {
       const result = await apiFetch('/logManualSession', { method: 'POST', body: JSON.stringify(body) })
       setLastSession({ toolName, duration, date, estimatedHours, selfHours })
       setBanner({ type: 'success', text: 'Session logged!' })
-      setDuration(30)
       setSelfHours('')
       setDate(today())
       // Trigger classification so adoption tier updates, then refresh the dashboard
@@ -240,8 +239,8 @@ function LogUsageTab({ currentUser, onNavigate, onSessionLogged }) {
           </label>
           <label className="de-field">
             <span>Duration</span>
-            <select value={duration} onChange={e => setDuration(Number(e.target.value))}>
-              {DURATIONS.map(d => <option key={d.value} value={d.value}>{d.label}</option>)}
+            <select value={String(duration)} onChange={e => setDuration(Number(e.target.value))}>
+              {DURATIONS.map(d => <option key={d.value} value={String(d.value)}>{d.label}</option>)}
             </select>
           </label>
           <label className="de-field">
