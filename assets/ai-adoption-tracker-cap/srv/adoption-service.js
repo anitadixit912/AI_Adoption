@@ -108,7 +108,7 @@ export default class AdoptionService extends cds.ApplicationService {
 
     // ── logManualSession ───────────────────────────────────────────────────
     this.on('logManualSession', async req => {
-      const { toolID, taskType, sessionDate, durationMinutes, selfReportedHoursSaved } = req.data
+      const { toolID, taskType, sessionDate, durationMinutes, selfReportedHoursSaved, consultantID } = req.data
       if (!toolID || !durationMinutes || durationMinutes <= 0)
         return req.reject(400, 'toolID and durationMinutes are required and durationMinutes must be > 0')
 
@@ -116,10 +116,15 @@ export default class AdoptionService extends cds.ApplicationService {
       const tool = await SELECT.one.from(AITools).where({ ID: toolID })
       if (!tool) return req.reject(404, 'Tool not found')
 
+      const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+      const resolvedConsultant = (consultantID && UUID_RE.test(consultantID))
+        ? consultantID
+        : (UUID_RE.test(req.user.id) ? req.user.id : 'dddddddd-dddd-dddd-dddd-dddddddddddd')
+
       const estimatedHoursSaved = calcEstimatedHours(durationMinutes, tool.name)
       const session = {
         ID:                     cds.utils.uuid(),
-        consultant_ID:          req.user.id ?? 'dddddddd-dddd-dddd-dddd-dddddddddddd',
+        consultant_ID:          resolvedConsultant,
         tool_ID:                toolID,
         sessionDate:            sessionDate ?? new Date().toISOString().split('T')[0],
         durationMinutes,
@@ -134,11 +139,14 @@ export default class AdoptionService extends cds.ApplicationService {
 
     // ── updateMyProfile ───────────────────────────────────────────────────
     this.on('updateMyProfile', async req => {
-      const { name, email, jobTitle, businessUnit, department, managerName, joinDate } = req.data
-      const consultantID = req.user.id ?? 'dddddddd-dddd-dddd-dddd-dddddddddddd'
+      const { name, email, jobTitle, businessUnit, department, managerName, joinDate, consultantID } = req.data
       const { Consultants } = cds.entities('adoption')
+      const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+      const resolvedConsultant = (consultantID && UUID_RE.test(consultantID))
+        ? consultantID
+        : (UUID_RE.test(req.user.id) ? req.user.id : 'dddddddd-dddd-dddd-dddd-dddddddddddd')
 
-      const existing = await SELECT.one.from(Consultants).where({ ID: consultantID })
+      const existing = await SELECT.one.from(Consultants).where({ ID: resolvedConsultant })
       if (!existing) return req.reject(404, 'Consultant profile not found')
 
       const updates = {}
@@ -150,8 +158,8 @@ export default class AdoptionService extends cds.ApplicationService {
       if (managerName  != null) updates.managerName  = managerName
       if (joinDate     != null) updates.joinDate     = joinDate
 
-      await UPDATE(Consultants, consultantID).with(updates)
-      return await SELECT.one.from(Consultants).where({ ID: consultantID })
+      await UPDATE(Consultants, resolvedConsultant).with(updates)
+      return await SELECT.one.from(Consultants).where({ ID: resolvedConsultant })
     })
 
     // ── addAITool ─────────────────────────────────────────────────────────

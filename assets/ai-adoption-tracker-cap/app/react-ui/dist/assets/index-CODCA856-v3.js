@@ -10291,6 +10291,7 @@ function LogSession({ currentUser, onSessionLogged, onNavigate }) {
 				taskType,
 				sessionDate,
 				durationMinutes: duration,
+				consultantID: currentUser?.id,
 				...adjusted ? { selfReportedHoursSaved: Number(adjusted) } : {}
 			});
 			setSuccess(true);
@@ -37608,7 +37609,10 @@ function ProfileTab({ currentUser }) {
 		try {
 			await apiFetch("/updateMyProfile", {
 				method: "POST",
-				body: JSON.stringify(form)
+				body: JSON.stringify({
+					...form,
+					consultantID: currentUser?.id
+				})
 			});
 			setBanner({
 				type: "success",
@@ -37785,6 +37789,7 @@ function LogUsageTab({ currentUser, onNavigate, onSessionLogged }) {
 				taskType,
 				sessionDate: date,
 				durationMinutes: Number(duration),
+				consultantID: currentUser?.id,
 				...selfHours ? { selfReportedHoursSaved: Number(selfHours) } : {}
 			};
 			await apiFetch("/logManualSession", {

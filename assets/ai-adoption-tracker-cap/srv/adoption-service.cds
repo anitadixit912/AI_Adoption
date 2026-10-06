@@ -70,7 +70,8 @@ service AdoptionService {
     taskType               : String,
     sessionDate            : Date,
     durationMinutes        : Integer,
-    selfReportedHoursSaved : Decimal
+    selfReportedHoursSaved : Decimal,
+    consultantID           : UUID
   ) returns UsageSessions;
 
   // Update the current user's consultant profile
@@ -81,7 +82,8 @@ service AdoptionService {
     businessUnit : String,
     department   : String,
     managerName  : String,
-    joinDate     : Date
+    joinDate     : Date,
+    consultantID : UUID
   ) returns Consultants;
 
   // Add a new AI tool (Admin)

@@ -77,7 +77,7 @@ function ProfileTab({ currentUser }) {
     try {
       await apiFetch('/updateMyProfile', {
         method: 'POST',
-        body: JSON.stringify(form),
+        body: JSON.stringify({ ...form, consultantID: currentUser?.id }),
       })
       setBanner({ type: 'success', text: 'Profile saved successfully.' })
     } catch (e) {
@@ -180,6 +180,7 @@ function LogUsageTab({ currentUser, onNavigate, onSessionLogged }) {
         taskType,
         sessionDate:   date,
         durationMinutes: Number(duration),
+        consultantID: currentUser?.id,
         ...(selfHours ? { selfReportedHoursSaved: Number(selfHours) } : {}),
       }
       const result = await apiFetch('/logManualSession', { method: 'POST', body: JSON.stringify(body) })

@@ -40,6 +40,7 @@ export default function LogSession({ currentUser, onSessionLogged, onNavigate })
         taskType,
         sessionDate,
         durationMinutes: duration,
+        consultantID: currentUser?.id,
         ...(adjusted ? { selfReportedHoursSaved: Number(adjusted) } : {}),
       })
       setSuccess(true)
